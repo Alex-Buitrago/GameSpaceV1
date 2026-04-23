@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css">
+  <title>Login</title>
+</head>
+<body>
+
+<div class="card">
+  <h2>SpaceGame</h2>
+  <button id="googleLogin">Login con Google</button>
+</div>
+
+<script type="module">
+import { loginWithGoogle } from "../src/auth.js";
+
+document.getElementById("googleLogin").onclick = loginWithGoogle;
+</script>
+
+</body>
+</html>
