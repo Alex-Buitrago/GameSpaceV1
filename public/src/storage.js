@@ -7,7 +7,7 @@ const defaultState = {
   energy: 0,
   click: 1,
   auto: 0,
-  upgrades: data.upgrades ?? {}
+  upgrades: []
 };
 
 // 💾 Guardar progreso
@@ -38,7 +38,7 @@ export async function loadGame(uid) {
       energy: data.energy ?? 0,
       click: data.click ?? 1,
       auto: data.auto ?? 0,
-      upgrades: data.upgrades ?? []
+      upgrades: data.upgrades ?? {}
     };
 
   } catch (err) {
