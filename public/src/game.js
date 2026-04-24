@@ -53,7 +53,7 @@ export function initGame() {
         energy: saved.energy ?? 0,
         click: saved.click ?? 1,
         auto: saved.auto ?? 0,
-        upgrades: saved.upgrades ?? []
+        upgrades: saved.upgrades ?? {}
       };
     }
 
