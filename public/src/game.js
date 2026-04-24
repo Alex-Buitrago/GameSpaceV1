@@ -161,6 +161,7 @@ function render() {
   updateEPS(getEPS());
   updateEraUI(state.era, erasData);
   updatePrestige(state.prestigePoints, state.prestigeBonus);
+  drawLines(container, data);
 
   renderPrestigeShop(
     prestigeData,
