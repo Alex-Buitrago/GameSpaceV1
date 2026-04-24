@@ -2,12 +2,10 @@ import { auth } from "./firebase.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 import { saveGame, loadGame } from "./storage.js";
-import { updateEnergy, clickEffect } from "./ui.js";
+
 import { renderShop } from "./shop.js";
 
-import { updateEraUI } from "./ui.js";
-
-import { updateEPS } from "./ui.js";
+import { updateEnergy, updateEPS, updateEraUI, updatePrestige } from "./ui.js";
 
 let state = {
   energy: 0,
