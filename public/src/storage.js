@@ -48,10 +48,14 @@ export async function loadGame(uid) {
 
     // 🛡️ Normalización completa (evita undefined)
     return {
-      energy: data.energy ?? 0,
-      click: data.click ?? 1,
-      auto: data.auto ?? 0,
-      upgrades: upgrades ?? {}
+        energy: data.energy ?? 0,
+        click: data.click ?? 1,
+        auto: data.auto ?? 0,
+        upgrades: upgrades ?? {},
+        era: data.era ?? "stone",
+      
+        prestigePoints: data.prestigePoints ?? 0,
+        prestigeBonus: data.prestigeBonus ?? 1
     };
 
   } catch (err) {
