@@ -26,6 +26,7 @@ function calculatePrestigeGain() {
   return Math.floor(Math.sqrt(state.energy / 1000));
 }
 
+
 //Arbol
 let prestigeData = [];
 
@@ -39,6 +40,13 @@ let upgradesData = [];
 
 function getLevel(upgId) {
   return state.upgrades[upgId] || 0;
+}
+
+function isUnlocked(node) {
+  // Si no tiene requisitos → siempre desbloqueado
+  if (!node.requires || node.requires.length === 0) return true;
+
+  return node.requires.every(id => getPrestigeLevel(id) > 0);
 }
 
 function getPrestigeLevel(id) {
