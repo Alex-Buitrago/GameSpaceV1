@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <link rel="stylesheet" href="styles.css">
-  <title>Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <title>Login</title>
 </head>
+
 <body>
 
-<div class="card">
-  <h2>SpaceGame</h2>
-  <button id="googleLogin">Login con Google</button>
-</div>
+    <div class="card">
+        <h2>SpaceGame</h2>
+        <button id="googleLogin">Login con Google</button>
+    </div>
 
-<script type="module">
-    import { loginWithGoogle, checkAuth } from "../src/auth.js";
-    
-    checkAuth();
-    
-    document.getElementById("googleLogin").onclick = loginWithGoogle;
+    <script type="module">
+        import { loginWithGoogle, checkAuth } from "/src/auth.js";
+
+        checkAuth();
+
+        document.getElementById("googleLogin").onclick = loginWithGoogle;
     </script>
 
 </body>
+
 </html>
