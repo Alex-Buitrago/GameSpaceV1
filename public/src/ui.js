@@ -13,6 +13,18 @@ export function updatePrestige(points, bonus) {
   }
 }
 
+//UIpRESTIGIO
+export function updatePrestigePreview(value) {
+  const el = document.getElementById("prestigePreview");
+
+  if (!el) return;
+
+  el.textContent = value;
+
+  // 🎨 color dinámico
+  el.style.color = value > 0 ? "#00ff88" : "#888";
+}
+
 //EPS
 export function updateEPS(value) {
   const el = document.getElementById("eps");

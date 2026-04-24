@@ -5,7 +5,7 @@ import { saveGame, loadGame } from "./storage.js";
 
 import { renderShop } from "./shop.js";
 
-import { updateEnergy, updateEPS, updateEraUI, updatePrestige } from "./ui.js";
+import { updateEnergy, updateEPS, updateEraUI, updatePrestige, updatePrestigePreview } from "./ui.js";
 
 let state = {
   energy: 0,
@@ -139,6 +139,9 @@ function render() {
     upg => erasData.find(e => e.id === upg.era)?.requiredEnergy <= state.energy
   );
 
+  const preview = calculatePrestigeGain();
+
+  updatePrestigePreview(preview);
   updateEnergy(state.energy);
   updateEPS(getEPS());
   updateEraUI(state.era, erasData);
