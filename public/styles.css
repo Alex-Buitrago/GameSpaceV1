@@ -1,26 +1,30 @@
+/* 🔥 RESET */
 body {
     margin: 0;
-    font-family: sans-serif;
+    font-family: Arial, sans-serif;
     background: #0a0a0f;
-    color: #fff;
+    color: #ffffff;
   }
   
+  /* 📦 APP */
   .app {
     display: flex;
     flex-direction: column;
     height: 100vh;
   }
   
-  /* TOP BAR */
+  /* 🔝 TOPBAR */
   .topbar {
     display: flex;
     justify-content: space-around;
+    align-items: center;
     background: #1a0f2a;
-    padding: 10px;
     border-bottom: 2px solid #ff0033;
+    padding: 10px;
+    font-weight: bold;
   }
   
-  /* MAIN */
+  /* 🧩 MAIN LAYOUT */
   .main {
     display: grid;
     grid-template-columns: 1fr 2fr 1.5fr;
@@ -29,7 +33,7 @@ body {
     flex: 1;
   }
   
-  /* SECCIONES */
+  /* 📚 COLUMNAS */
   .left, .center, .right {
     display: flex;
     flex-direction: column;
@@ -37,17 +41,18 @@ body {
     min-height: 0;
   }
   
-  /* TARJETAS */
+  /* 🧱 CARDS */
   .card {
     background: #14141c;
     border: 2px solid #5a0f7a;
     border-radius: 10px;
     padding: 10px;
+    box-shadow: 0 0 10px rgba(138, 43, 226, 0.3);
     display: flex;
     flex-direction: column;
   }
   
-  /* BOTÓN PRINCIPAL */
+  /* 🎮 BOTÓN PRINCIPAL */
   .main-btn {
     height: 120px;
     font-size: 24px;
@@ -63,24 +68,74 @@ body {
     transform: scale(1.05);
   }
   
-  /* TIENDA */
+  .main-btn:active {
+    transform: scale(0.9);
+  }
+  
+  /* 🛒 TIENDA */
   .shop-item {
     padding: 8px;
     border-bottom: 1px solid #333;
   }
   
-  /* ÁRBOL */
+  /* ========================= */
+  /* 🌳 ÁRBOL DE PRESTIGIO */
+  /* ========================= */
+  
   #prestigeTree {
     position: relative;
     width: 100%;
-    min-height: 400px;   /* 🔥 importante */
+    min-height: 400px;
     height: 100%;
     background: #0f0f18;
     border-radius: 10px;
     overflow: hidden;
     flex: 1;
   }
-
+  
+  /* 🔘 NODOS */
+  .node {
+    position: absolute;
+    width: 100px;
+    height: 60px;
+    background: #222;
+    border: 2px solid #555;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 12px;
+    padding: 5px;
+    cursor: pointer;
+    transition: 0.2s;
+    z-index: 2;
+  }
+  
+  /* ✨ estados */
+  .node.unlocked {
+    border-color: #00ff88;
+    box-shadow: 0 0 8px #00ff88;
+  }
+  
+  .node.locked {
+    opacity: 0.4;
+  }
+  
+  .node:hover {
+    transform: scale(1.05);
+  }
+  
+  /* 🔗 LÍNEAS */
+  .line {
+    position: absolute;
+    height: 2px;
+    background: #555;
+    z-index: 1;
+    transform-origin: 0 0;
+  }
+  
+  /* ========================= */
+  /* ✨ EFECTOS CLICK */
+  /* ========================= */
+  
   .floating-text {
     position: absolute;
     pointer-events: none;
@@ -88,6 +143,7 @@ body {
     color: #00ff88;
     text-shadow: 0 0 6px #00ff88;
     animation: floatUp 0.8s ease-out forwards;
+    z-index: 999;
   }
   
   @keyframes floatUp {
@@ -101,15 +157,16 @@ body {
     }
   }
   
-  /* efecto botón */
-  .main-btn:active {
-    transform: scale(0.9);
-  }
-
-  .node {
-    z-index: 2;
-  }
+  /* ========================= */
+  /* 📱 RESPONSIVE (básico) */
+  /* ========================= */
   
-  .line {
-    z-index: 1;
+  @media (max-width: 900px) {
+    .main {
+      grid-template-columns: 1fr;
+    }
+  
+    #prestigeTree {
+      min-height: 300px;
+    }
   }
