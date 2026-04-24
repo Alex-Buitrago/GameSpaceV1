@@ -40,7 +40,7 @@ export function renderPrestigeTree(data, state, onBuy, getLevel, isUnlocked) {
   container.innerHTML = "";
 
   // 🔥 dibujar líneas primero
-  drawLines(container, data);
+  drawLines(container, data, getLevel);
 
   data.forEach(node => {
     const level = getLevel(node.id);
@@ -129,29 +129,34 @@ export function updateEnergy(value) {
   }
 
 //Lineas
-  function drawLines(container, data) {
-    data.forEach(node => {
-      node.requires.forEach(reqId => {
-        const from = data.find(n => n.id === reqId);
-        if (!from) return;
-  
-        const line = document.createElement("div");
-        line.className = "line";
-  
-        const x1 = from.x * 120 + 50;
-        const y1 = from.y * 100 + 30;
-        const x2 = node.x * 120 + 50;
-        const y2 = node.y * 100 + 30;
-  
-        const length = Math.hypot(x2 - x1, y2 - y1);
-        const angle = Math.atan2(y2 - y1, x2 - x1);
-  
-        line.style.width = length + "px";
-        line.style.left = x1 + "px";
-        line.style.top = y1 + "px";
-        line.style.transform = `rotate(${angle}rad)`;
-  
-        container.appendChild(line);
-      });
+function drawLines(container, data, getLevel) {
+  data.forEach(node => {
+    node.requires.forEach(reqId => {
+      const from = data.find(n => n.id === reqId);
+      if (!from) return;
+
+      const line = document.createElement("div");
+      line.className = "line";
+
+      const x1 = from.x * 120 + 50;
+      const y1 = from.y * 100 + 30;
+      const x2 = node.x * 120 + 50;
+      const y2 = node.y * 100 + 30;
+
+      const length = Math.hypot(x2 - x1, y2 - y1);
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+
+      line.style.width = length + "px";
+      line.style.left = x1 + "px";
+      line.style.top = y1 + "px";
+      line.style.transform = `rotate(${angle}rad)`;
+
+      // 🔥 COLOR DINÁMICO
+      const active = getLevel(reqId) > 0;
+
+      line.style.background = active ? "#00ff88" : "#555";
+
+      container.appendChild(line);
     });
-  }
+  });
+}
