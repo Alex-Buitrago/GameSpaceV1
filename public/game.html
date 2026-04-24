@@ -6,49 +6,56 @@
 </head>
 
 <body>
-
-    <div class="card">
-        <h1>⚡ Energía: <span id="energy">0</span></h1>
-        <button id="clickBtn">Generar</button>
-      </div>
-
-      <h3>⚙ Producción: <span id="eps">0</span>/s</h3>
-
-      <div class="card">
-        <h2>Prestigio</h2>
-        <p>💎 Fragmentos: <span id="prestigePoints">0</span></p>
-        <p>🚀 Bonus: <span id="prestigeBonus">1x</span></p>
-        <button id="prestigeBtn">Reiniciar progreso</button>
-      </div>
-
-      <p>Ganancia potencial: <span id="prestigePreview">0</span> 💎</p>
-      
-      <div class="card">
-        <h2>Tienda</h2>
-        <div id="shop"></div>
-      </div>
-
-      <h2 id="eraText"></h2>
-
-      <div class="card">
-        <h2>Árbol de Prestigio</h2>
-        <div id="prestigeTree"></div>
-      </div>
-
-    <script type="module">
-        import { auth } from "/src/firebase.js";
-        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { initGame } from "/src/game.js";
-
-        onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                window.location.href = "/login.html";
-            } else {
-                initGame();
-            }
-        });
-    </script>
-
-</body>
+    <div class="app">
+  
+      <!-- 🧠 HUD SUPERIOR -->
+      <header class="topbar">
+        <div>
+          ⚡ Energía: <span id="energy">0</span>
+        </div>
+        <div>
+          ⚙ <span id="eps">0</span>/s
+        </div>
+        <div>
+          🌌 <span id="eraText"></span>
+        </div>
+      </header>
+  
+      <!-- 🎮 CONTENIDO PRINCIPAL -->
+      <main class="main">
+  
+        <!-- IZQUIERDA -->
+        <section class="left">
+          <button id="clickBtn" class="main-btn">CLICK</button>
+  
+          <!-- Prestigio -->
+          <div class="card">
+            <h3>Prestigio</h3>
+            <p>💎 <span id="prestigePoints">0</span></p>
+            <p>🚀 <span id="prestigeBonus">1x</span></p>
+            <p>Ganancia: <span id="prestigePreview">0</span></p>
+            <button id="prestigeBtn">Reiniciar</button>
+          </div>
+        </section>
+  
+        <!-- CENTRO -->
+        <section class="center">
+          <div class="card">
+            <h3>Tienda</h3>
+            <div id="shop"></div>
+          </div>
+        </section>
+  
+        <!-- DERECHA -->
+        <section class="right">
+          <div class="card">
+            <h3>Árbol</h3>
+            <div id="prestigeTree"></div>
+          </div>
+        </section>
+  
+      </main>
+    </div>
+  </body>
 
 </html>

@@ -5,7 +5,9 @@ import { saveGame, loadGame } from "./storage.js";
 
 import { renderShop } from "./shop.js";
 
-import { updateEnergy, updateEPS, updateEraUI, updatePrestige, updatePrestigePreview, renderPrestigeShop, renderPrestigeTree } from "./ui.js";
+import { updateEnergy, updateEPS, updateEraUI, updatePrestige, 
+  updatePrestigePreview, renderPrestigeShop, renderPrestigeTree,
+  spawnFloatingText  } from "./ui.js";
 
 let state = {
   energy: 0,
@@ -135,8 +137,19 @@ export function initGame() {
     };
 
     // 👆 Click manual
-    btn.onclick = () => {
-      state.energy += state.click * state.prestigeBonus;
+    btn.onclick = (e) => {
+      const gain = state.click * state.prestigeBonus;
+    
+      state.energy += gain;
+    
+      // 🔥 posición del click
+      const rect = e.target.getBoundingClientRect();
+    
+      const x = rect.left + rect.width / 2;
+      const y = rect.top;
+    
+      spawnFloatingText(gain, x, y);
+    
       render();
     };
 

@@ -160,3 +160,19 @@ function drawLines(container, data, getLevel) {
     });
   });
 }
+
+export function spawnFloatingText(value, x, y) {
+  const el = document.createElement("div");
+  el.className = "floating-text";
+
+  el.textContent = "+" + Math.floor(value);
+
+  el.style.left = x + "px";
+  el.style.top = y + "px";
+
+  document.body.appendChild(el);
+
+  setTimeout(() => {
+    el.remove();
+  }, 800);
+}
