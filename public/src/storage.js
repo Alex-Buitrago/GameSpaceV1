@@ -10,9 +10,15 @@ export async function loadGame(uid) {
   const docRef = doc(db, "players", uid);
   const snap = await getDoc(docRef);
 
-  if (snap.exists()) {
-    return snap.data();
-  } else {
-    return null;
+  if (!snap.exists()) {
+    const defaultState = {
+      energy: 0,
+      click: 1,
+      auto: 0,
+      upgrades: []
+    };
+  
+    await setDoc(doc(db, "players", uid), defaultState);
+    return defaultState;
   }
 }
