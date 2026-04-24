@@ -25,5 +25,15 @@
     "value": 5,
     "scaling": 1.25,
     "era": "industrial"
+  },
+  {
+    "id": "boost_1",
+    "name": "Núcleo energético",
+    "baseCost": 300,
+    "type": "multiplier",
+    "value": 1.5,
+    "scaling": 1.25,
+    "era": "stone"
   }
+  
 ]

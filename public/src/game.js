@@ -7,14 +7,18 @@ import { renderShop } from "./shop.js";
 
 import { updateEraUI } from "./ui.js";
 
+import { updateEPS } from "./ui.js";
+
 let state = {
   energy: 0,
   click: 1,
   auto: 0,
   upgrades: {},
-  era: "stone"
+  era: "stone",
+  multiplier: 1 
 };
 
+//UpgradeData
 let upgradesData = [];
 
 function getLevel(upgId) {
@@ -26,6 +30,7 @@ function getCost(upg) {
   return Math.floor(upg.baseCost * Math.pow(upg.scaling, level));
 }
 
+//ErasData
 let erasData = [];
 
 async function loadEras() {
@@ -42,6 +47,11 @@ function updateEra() {
       break;
     }
   }
+}
+
+//EPS
+function getEPS() {
+  return state.auto * state.multiplier;
 }
 
 // 🔥 Cargar upgrades desde JSON
@@ -63,26 +73,19 @@ export function initGame() {
   const btn = document.getElementById("clickBtn");
 
   onAuthStateChanged(auth, async (user) => {
-    if (!user) return;
-
-    // 🔄 Cargar datos del usuario
-    const saved = await loadGame(user.uid);
-    console.log("CARGADO DESDE FIRE:", saved);
-
-    if (saved) {
-      state = {
-        energy: saved.energy ?? 0,
-        click: saved.click ?? 1,
-        auto: saved.auto ?? 0,
-        upgrades: saved.upgrades ?? []
-      };
+    if (!user) {
+      window.location.href = "/login.html";
+      return;
     }
 
-   
-    // 📦 Cargar upgrades
+    // 📦 Cargar datos
     await loadUpgrades();
     await loadEras();
 
+    const saved = await loadGame(user.uid);
+    if (saved) state = saved;
+
+    // 🔥 CLAVE
     recalcStats();
 
     render();
@@ -90,13 +93,13 @@ export function initGame() {
     // 👆 Click manual
     btn.onclick = () => {
       state.energy += state.click;
-      clickEffect(btn);
       render();
     };
 
-    // ⚙️ Auto generación
+    // ⚙️ Producción automática
     setInterval(() => {
-      state.energy += state.auto;
+      state.energy += getEPS();
+      state.energy = Math.min(state.energy, 1e12);
       render();
     }, 1000);
 
@@ -109,13 +112,15 @@ export function initGame() {
 
 // 🎨 Render general
 function render() {
-  updateEnergy(state.energy);
-
   updateEra();
 
   const availableUpgrades = upgradesData.filter(
-    upg => upg.era === state.era
+    upg => erasData.find(e => e.id === upg.era)?.requiredEnergy <= state.energy
   );
+
+  updateEnergy(state.energy);
+  updateEPS(getEPS());
+  updateEraUI(state.era, erasData);
 
   renderShop(
     availableUpgrades,
@@ -124,14 +129,13 @@ function render() {
     getCost,
     getLevel
   );
-
-  updateEraUI(state.era, erasData);
 }
 
 // RecalcStats
 function recalcStats() {
-  state.click = 1; // base
+  state.click = 1;
   state.auto = 0;
+  state.multiplier = 1;
 
   upgradesData.forEach(upg => {
     const level = getLevel(upg.id);
@@ -142,6 +146,10 @@ function recalcStats() {
 
     if (upg.type === "auto") {
       state.auto += upg.value * level;
+    }
+
+    if (upg.type === "multiplier") {
+      state.multiplier *= Math.pow(upg.value, level);
     }
   });
 }

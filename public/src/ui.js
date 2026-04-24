@@ -1,5 +1,16 @@
 // /src/ui.js
 
+//EPS
+export function updateEPS(value) {
+  const el = document.getElementById("eps");
+  if (!el) return;
+
+  el.textContent = value.toFixed(1) + "/s";
+
+  el.style.color = value > 10 ? "#00ff88" : "#ffffff";
+}
+
+//ERA
 export function updateEraUI(eraId, erasData) {
   const el = document.getElementById("eraText");
 
@@ -10,6 +21,7 @@ export function updateEraUI(eraId, erasData) {
   }
 }
 
+//ENERGY
 export function updateEnergy(value) {
     const el = document.getElementById("energy");
     if (el) el.textContent = value;
