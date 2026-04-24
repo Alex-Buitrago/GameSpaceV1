@@ -39,3 +39,37 @@ body {
   .shop-item:hover {
     transform: scale(1.03);
   }
+
+  #prestigeTree {
+    position: relative;
+    width: 100%;
+    height: 400px;
+  }
+  
+  .node {
+    position: absolute;
+    width: 100px;
+    height: 60px;
+    background: #222;
+    border: 2px solid #555;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 12px;
+    padding: 5px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  
+  .node.unlocked {
+    border-color: #00ff88;
+  }
+  
+  .node.locked {
+    opacity: 0.4;
+  }
+  
+  .line {
+    position: absolute;
+    height: 2px;
+    background: #555;
+  }

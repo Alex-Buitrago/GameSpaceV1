@@ -5,7 +5,7 @@ import { saveGame, loadGame } from "./storage.js";
 
 import { renderShop } from "./shop.js";
 
-import { updateEnergy, updateEPS, updateEraUI, updatePrestige, updatePrestigePreview, renderPrestigeShop } from "./ui.js";
+import { updateEnergy, updateEPS, updateEraUI, updatePrestige, updatePrestigePreview, renderPrestigeShop, renderPrestigeTree  } from "./ui.js";
 
 let state = {
   energy: 0,
@@ -161,12 +161,21 @@ function render() {
   updateEPS(getEPS());
   updateEraUI(state.era, erasData);
   updatePrestige(state.prestigePoints, state.prestigeBonus);
+  drawLines(container, data);
 
   renderPrestigeShop(
     prestigeData,
     state,
     buyPrestigeUpgrade,
     getPrestigeLevel
+  );
+
+  renderPrestigeTree(
+    prestigeData,
+    state,
+    buyPrestigeUpgrade,
+    getPrestigeLevel,
+    isUnlocked
   );
 
   renderShop(

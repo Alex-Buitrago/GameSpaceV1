@@ -1,6 +1,6 @@
 // /src/ui.js
 
-//ARBOL
+//ARBOLSHOP
 export function renderPrestigeShop(data, state, onBuy, getLevel) {
   const shop = document.getElementById("prestigeShop");
   if (!shop) return;
@@ -29,6 +29,40 @@ export function renderPrestigeShop(data, state, onBuy, getLevel) {
     }
 
     shop.appendChild(div);
+  });
+}
+
+//ARBOLTREE
+export function renderPrestigeTree(data, state, onBuy, getLevel, isUnlocked) {
+  const container = document.getElementById("prestigeTree");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  data.forEach(node => {
+    const level = getLevel(node.id);
+    const unlocked = isUnlocked(node);
+    const cost = node.cost * (level + 1);
+
+    const div = document.createElement("div");
+    div.className = "node";
+
+    div.style.left = node.x * 120 + "px";
+    div.style.top = node.y * 100 + "px";
+
+    div.classList.add(unlocked ? "unlocked" : "locked");
+
+    div.innerHTML = `
+      <strong>${node.name}</strong><br>
+      Lvl: ${level}<br>
+      ${cost} 💎
+    `;
+
+    if (unlocked && state.prestigePoints >= cost) {
+      div.onclick = () => onBuy(node);
+    }
+
+    container.appendChild(div);
   });
 }
 
@@ -89,4 +123,32 @@ export function updateEnergy(value) {
     setTimeout(() => {
       button.style.transform = "scale(1)";
     }, 100);
+  }
+
+  //LINEAS
+  function drawLines(container, data) {
+    data.forEach(node => {
+      node.requires.forEach(reqId => {
+        const from = data.find(n => n.id === reqId);
+        if (!from) return;
+  
+        const line = document.createElement("div");
+        line.className = "line";
+  
+        const x1 = from.x * 120 + 50;
+        const y1 = from.y * 100 + 30;
+        const x2 = node.x * 120 + 50;
+        const y2 = node.y * 100 + 30;
+  
+        const length = Math.hypot(x2 - x1, y2 - y1);
+        const angle = Math.atan2(y2 - y1, x2 - x1);
+  
+        line.style.width = length + "px";
+        line.style.left = x1 + "px";
+        line.style.top = y1 + "px";
+        line.style.transform = `rotate(${angle}rad)`;
+  
+        container.appendChild(line);
+      });
+    });
   }

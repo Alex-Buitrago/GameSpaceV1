@@ -1,23 +1,42 @@
 [
     {
-      "id": "p_click",
-      "name": "Fuerza Mejorada",
+      "id": "root",
+      "name": "Núcleo",
+      "cost": 0,
+      "type": "multiplier",
+      "value": 0.1,
+      "x": 2,
+      "y": 0,
+      "requires": []
+    },
+    {
+      "id": "click_1",
+      "name": "Fuerza I",
       "cost": 5,
       "type": "click",
-      "value": 0.5
+      "value": 0.5,
+      "x": 1,
+      "y": 1,
+      "requires": ["root"]
     },
     {
-      "id": "p_auto",
-      "name": "Automatización",
-      "cost": 10,
+      "id": "auto_1",
+      "name": "Auto I",
+      "cost": 5,
       "type": "auto",
-      "value": 0.5
+      "value": 0.5,
+      "x": 3,
+      "y": 1,
+      "requires": ["root"]
     },
     {
-      "id": "p_multi",
-      "name": "Sobrecarga",
-      "cost": 20,
+      "id": "multi_1",
+      "name": "Overclock",
+      "cost": 10,
       "type": "multiplier",
-      "value": 0.2
+      "value": 0.2,
+      "x": 2,
+      "y": 2,
+      "requires": ["click_1", "auto_1"]
     }
   ]
