@@ -2,8 +2,15 @@
 
 //PRESTIGIO
 export function updatePrestige(points, bonus) {
-  document.getElementById("prestigePoints").textContent = points;
-  document.getElementById("prestigeBonus").textContent = bonus.toFixed(2) + "x";
+  const p = document.getElementById("prestigePoints");
+  const b = document.getElementById("prestigeBonus");
+
+  if (p) p.textContent = points ?? 0;
+
+  if (b) {
+    const safeBonus = bonus ?? 1;
+    b.textContent = safeBonus.toFixed(2) + "x";
+  }
 }
 
 //EPS
