@@ -22,9 +22,11 @@
     
         <!-- 🔘 TABS -->
         <div class="tabs">
-          <button class="tab-btn active" data-tab="shop">Tienda</button>
-          <button class="tab-btn" data-tab="tree">Árbol</button>
-        </div>
+            <button class="tab-btn active" data-tab="shop">Tienda</button>
+            <button class="tab-btn" data-tab="tree">Árbol</button>
+            <button class="tab-btn" data-tab="prestige">Prestigio</button>
+          </div>
+
     
         <!-- 📦 CONTENIDO -->
         <main class="content">
@@ -44,6 +46,21 @@
           </section>
     
         </main>
+
+        <section id="prestigeTab" class="tab">
+            <div class="card">
+              <h3>Prestigio</h3>
+          
+              <p>💎 Fragmentos: <span id="prestigePoints">0</span></p>
+              <p>🚀 Bonus: <span id="prestigeBonus">1x</span></p>
+              <p>Ganancia potencial: <span id="prestigePreview">0</span></p>
+          
+              <button id="prestigeBtn" class="prestige-btn">
+                Reiniciar progreso
+              </button>
+            </div>
+          </section>
+          
       </div>
 
     <script type="module">
