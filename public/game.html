@@ -7,55 +7,70 @@
 
 <body>
     <div class="app">
-  
-      <!-- 🧠 HUD SUPERIOR -->
-      <header class="topbar">
-        <div>
-          ⚡ Energía: <span id="energy">0</span>
-        </div>
-        <div>
-          ⚙ <span id="eps">0</span>/s
-        </div>
-        <div>
-          🌌 <span id="eraText"></span>
-        </div>
-      </header>
-  
-      <!-- 🎮 CONTENIDO PRINCIPAL -->
-      <main class="main">
-  
-        <!-- IZQUIERDA -->
-        <section class="left">
-          <button id="clickBtn" class="main-btn">CLICK</button>
-  
-          <!-- Prestigio -->
-          <div class="card">
-            <h3>Prestigio</h3>
-            <p>💎 <span id="prestigePoints">0</span></p>
-            <p>🚀 <span id="prestigeBonus">1x</span></p>
-            <p>Ganancia: <span id="prestigePreview">0</span></p>
-            <button id="prestigeBtn">Reiniciar</button>
+
+        <!-- 🧠 HUD SUPERIOR -->
+        <header class="topbar">
+          <div>
+            ⚡ Energía: <span id="energy">0</span>
           </div>
-        </section>
-  
-        <!-- CENTRO -->
-        <section class="center">
-          <div class="card">
-            <h3>Tienda</h3>
-            <div id="shop"></div>
+          <div>
+            ⚙ <span id="eps">0</span>/s
           </div>
-        </section>
-  
-        <!-- DERECHA -->
-        <section class="right">
-          <div class="card">
-            <h3>Árbol</h3>
-            <div id="prestigeTree"></div>
+          <div>
+            🌌 <span id="eraText"></span>
           </div>
-        </section>
-  
-      </main>
-    </div>
-  </body>
+        </header>
+    
+        <!-- 🎮 CONTENIDO PRINCIPAL -->
+        <main class="main">
+    
+          <!-- IZQUIERDA -->
+          <section class="left">
+            <button id="clickBtn" class="main-btn">CLICK</button>
+    
+            <!-- Prestigio -->
+            <div class="card">
+              <h3>Prestigio</h3>
+              <p>💎 <span id="prestigePoints">0</span></p>
+              <p>🚀 <span id="prestigeBonus">1x</span></p>
+              <p>Ganancia: <span id="prestigePreview">0</span></p>
+              <button id="prestigeBtn">Reiniciar</button>
+            </div>
+          </section>
+    
+          <!-- CENTRO -->
+          <section class="center">
+            <div class="card">
+              <h3>Tienda</h3>
+              <div id="shop"></div>
+            </div>
+          </section>
+    
+          <!-- DERECHA -->
+          <section class="right">
+            <div class="card">
+              <h3>Árbol</h3>
+              <div id="prestigeTree"></div>
+            </div>
+          </section>
+    
+        </main>
+      </div>
+
+    <script type="module">
+        import { auth } from "/src/firebase.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { initGame } from "/src/game.js";
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "/login.html";
+            } else {
+                initGame();
+            }
+        });
+    </script>
+
+</body>
 
 </html>
