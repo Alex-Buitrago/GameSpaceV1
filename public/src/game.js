@@ -46,6 +46,7 @@ export function initGame() {
 
     // 🔄 Cargar datos del usuario
     const saved = await loadGame(user.uid);
+    console.log("CARGADO DESDE FIRE:", saved);
 
     if (saved) {
       state = {
