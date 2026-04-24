@@ -6,7 +6,7 @@ export function renderShop(upgrades, state, onBuy) {
       const div = document.createElement("div");
       div.className = "shop-item";
   
-      const owned = state.upgrades.includes(upg.id);
+      const owned = (state.upgrades || []).includes(upg.id);
   
       div.innerHTML = `
         <strong>${upg.name}</strong><br>
