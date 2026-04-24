@@ -8,44 +8,42 @@
 <body>
     <div class="app">
 
-        <!-- 🧠 HUD SUPERIOR -->
+        <!-- 🔝 HUD -->
         <header class="topbar">
-          <div>
-            ⚡ Energía: <span id="energy">0</span>
-          </div>
-          <div>
-            ⚙ <span id="eps">0</span>/s
-          </div>
-          <div>
-            🌌 <span id="eraText"></span>
-          </div>
+          <div>⚡ <span id="energy">0</span></div>
+          <div>⚙ <span id="eps">0</span>/s</div>
+          <div>🌌 <span id="eraText"></span></div>
         </header>
     
-        <!-- 🎮 CONTENIDO PRINCIPAL -->
+        <!-- 🎮 BOTÓN PRINCIPAL (SIEMPRE VISIBLE) -->
+        <div class="click-container">
+          <button id="clickBtn" class="main-btn">⚡ GENERAR</button>
+        </div>
+    
+        <!-- 🔘 TABS -->
         <div class="tabs">
-            <button class="tab-btn active" data-tab="shop">Tienda</button>
-            <button class="tab-btn" data-tab="tree">Árbol</button>
-          </div>
-          
-          <main class="content">
-          
-            <!-- TIENDA -->
-            <section id="shopTab" class="tab active">
-              <div class="card">
-                <h3>Tienda</h3>
-                <div id="shop"></div>
-              </div>
-            </section>
-          
-            <!-- ÁRBOL -->
-            <section id="treeTab" class="tab">
-              <div class="card">
-                <h3>Árbol de Prestigio</h3>
-                <div id="prestigeTree"></div>
-              </div>
-            </section>
-          
-          </main>
+          <button class="tab-btn active" data-tab="shop">Tienda</button>
+          <button class="tab-btn" data-tab="tree">Árbol</button>
+        </div>
+    
+        <!-- 📦 CONTENIDO -->
+        <main class="content">
+    
+          <section id="shopTab" class="tab active">
+            <div class="card">
+              <h3>Tienda</h3>
+              <div id="shop"></div>
+            </div>
+          </section>
+    
+          <section id="treeTab" class="tab">
+            <div class="card">
+              <h3>Árbol de Prestigio</h3>
+              <div id="prestigeTree"></div>
+            </div>
+          </section>
+    
+        </main>
       </div>
 
     <script type="module">
