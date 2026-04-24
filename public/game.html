@@ -22,39 +22,30 @@
         </header>
     
         <!-- 🎮 CONTENIDO PRINCIPAL -->
-        <main class="main">
-    
-          <!-- IZQUIERDA -->
-          <section class="left">
-            <button id="clickBtn" class="main-btn">CLICK</button>
-    
-            <!-- Prestigio -->
-            <div class="card">
-              <h3>Prestigio</h3>
-              <p>💎 <span id="prestigePoints">0</span></p>
-              <p>🚀 <span id="prestigeBonus">1x</span></p>
-              <p>Ganancia: <span id="prestigePreview">0</span></p>
-              <button id="prestigeBtn">Reiniciar</button>
-            </div>
-          </section>
-    
-          <!-- CENTRO -->
-          <section class="center">
-            <div class="card">
-              <h3>Tienda</h3>
-              <div id="shop"></div>
-            </div>
-          </section>
-    
-          <!-- DERECHA -->
-          <section class="right">
-            <div class="card">
-              <h3>Árbol</h3>
-              <div id="prestigeTree"></div>
-            </div>
-          </section>
-    
-        </main>
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="shop">Tienda</button>
+            <button class="tab-btn" data-tab="tree">Árbol</button>
+          </div>
+          
+          <main class="content">
+          
+            <!-- TIENDA -->
+            <section id="shopTab" class="tab active">
+              <div class="card">
+                <h3>Tienda</h3>
+                <div id="shop"></div>
+              </div>
+            </section>
+          
+            <!-- ÁRBOL -->
+            <section id="treeTab" class="tab">
+              <div class="card">
+                <h3>Árbol de Prestigio</h3>
+                <div id="prestigeTree"></div>
+              </div>
+            </section>
+          
+          </main>
       </div>
 
     <script type="module">

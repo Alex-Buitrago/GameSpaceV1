@@ -170,3 +170,41 @@ body {
       min-height: 300px;
     }
   }
+
+  /* 🔘 BOTONES */
+.tabs {
+    display: flex;
+    gap: 5px;
+    padding: 10px;
+    background: #1a0f2a;
+  }
+  
+  .tab-btn {
+    flex: 1;
+    padding: 10px;
+    background: #222;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+  }
+  
+  .tab-btn.active {
+    border-bottom: 2px solid #ff0033;
+    background: #2a1a3a;
+  }
+  
+  /* 📦 CONTENIDO */
+  .content {
+    padding: 10px;
+    flex: 1;
+  }
+  
+  /* 📄 SECCIONES */
+  .tab {
+    display: none;
+  }
+  
+  .tab.active {
+    display: block;
+  }

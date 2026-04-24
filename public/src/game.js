@@ -7,7 +7,9 @@ import { renderShop } from "./shop.js";
 
 import { updateEnergy, updateEPS, updateEraUI, updatePrestige, 
   updatePrestigePreview, renderPrestigeShop, renderPrestigeTree,
-  spawnFloatingText  } from "./ui.js";
+  spawnFloatingText, initTabs  } from "./ui.js";
+
+initTabs();
 
 let state = {
   energy: 0,

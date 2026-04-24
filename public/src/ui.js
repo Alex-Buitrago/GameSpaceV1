@@ -182,3 +182,22 @@ export function spawnFloatingText(value, x, y) {
     el.remove();
   }, 800);
 }
+
+export function initTabs() {
+  const buttons = document.querySelectorAll(".tab-btn");
+  const tabs = document.querySelectorAll(".tab");
+
+  buttons.forEach(btn => {
+    btn.onclick = () => {
+      // quitar activos
+      buttons.forEach(b => b.classList.remove("active"));
+      tabs.forEach(t => t.classList.remove("active"));
+
+      // activar
+      btn.classList.add("active");
+
+      const id = btn.dataset.tab;
+      document.getElementById(id + "Tab").classList.add("active");
+    };
+  });
+}
