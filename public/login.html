@@ -2,24 +2,48 @@
 <html>
 
 <head>
-    <link rel="stylesheet" href="styles.css">
-    <title>Login</title>
+  <link rel="stylesheet" href="styles.css">
+  <title>Login</title>
 </head>
 
 <body>
 
-    <div class="card">
-        <h2>SpaceGame</h2>
-        <button id="googleLogin">Login con Google</button>
-    </div>
+  <div class="card">
+    <h2>SpaceGame</h2>
 
-    <script type="module">
-        import { loginWithGoogle, checkAuth } from "/src/auth.js";
+    <input id="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
 
-        checkAuth();
+    <button id="loginBtn">Login</button>
+    <button id="registerBtn">Register</button>
 
-        document.getElementById("googleLogin").onclick = loginWithGoogle;
-    </script>
+    <p id="msg"></p>
+  </div>
+
+  <script type="module">
+    import { login, register } from "/src/auth.js";
+
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
+    const msg = document.getElementById("msg");
+
+    document.getElementById("loginBtn").onclick = async () => {
+      try {
+        await login(email.value, password.value);
+      } catch (e) {
+        msg.innerText = e.message;
+      }
+    };
+
+    document.getElementById("registerBtn").onclick = async () => {
+      try {
+        await register(email.value, password.value);
+        msg.innerText = "Usuario creado, ahora inicia sesión";
+      } catch (e) {
+        msg.innerText = e.message;
+      }
+    };
+  </script>
 
 </body>
 

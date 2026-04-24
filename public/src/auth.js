@@ -1,20 +1,34 @@
-import { auth, provider } from "./firebase.js";
-import { 
-  signInWithPopup,
-  onAuthStateChanged 
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+export async function login(email, password) {
+  const res = await fetch("/api/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password })
+  });
 
-export async function loginWithGoogle() {
-  await signInWithPopup(auth, provider);
+  const data = await res.json();
+
+  if (!res.ok) throw new Error(data.error);
+
+  localStorage.setItem("user", JSON.stringify(data.user));
+  window.location.href = "/game.html";
+}
+
+export async function register(email, password) {
+  const res = await fetch("/api/auth/register", {
+    method: "POST",
+    body: JSON.stringify({ email, password })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) throw new Error(data.error);
+
+  return data;
 }
 
 export function checkAuth() {
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
-      window.location.href = "/game.html";
-    } else {
-      localStorage.removeItem("user");
-    }
-  });
+  const user = localStorage.getItem("user");
+
+  if (!user && location.pathname === "/game.html") {
+    window.location.href = "/login.html";
+  }
 }
