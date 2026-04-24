@@ -37,7 +37,15 @@ export function initGame() {
 
     // 🔄 Cargar datos del usuario
     const saved = await loadGame(user.uid);
-    if (saved) state = saved;
+
+    if (saved) {
+      state = {
+        energy: saved.energy ?? 0,
+        click: saved.click ?? 1,
+        auto: saved.auto ?? 0,
+        upgrades: saved.upgrades ?? []
+      };
+    }
 
     // 📦 Cargar upgrades
     await loadUpgrades();
