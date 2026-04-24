@@ -1,0 +1,17 @@
+[
+    {
+      "id": "stone",
+      "name": "Era Piedra Tecnológica",
+      "requiredEnergy": 0
+    },
+    {
+      "id": "industrial",
+      "name": "Era Industrial",
+      "requiredEnergy": 500
+    },
+    {
+      "id": "space",
+      "name": "Era Espacial",
+      "requiredEnergy": 2000
+    }
+  ]

@@ -5,11 +5,14 @@ import { saveGame, loadGame } from "./storage.js";
 import { updateEnergy, clickEffect } from "./ui.js";
 import { renderShop } from "./shop.js";
 
+import { updateEraUI } from "./ui.js";
+
 let state = {
   energy: 0,
   click: 1,
   auto: 0,
-  upgrades: {} // 👈 ahora es objeto, no array
+  upgrades: {},
+  era: "stone"
 };
 
 let upgradesData = [];
@@ -21,6 +24,24 @@ function getLevel(upgId) {
 function getCost(upg) {
   const level = getLevel(upg.id);
   return Math.floor(upg.baseCost * Math.pow(upg.scaling, level));
+}
+
+let erasData = [];
+
+async function loadEras() {
+  const res = await fetch("/data/eras.json");
+  erasData = await res.json();
+}
+
+function updateEra() {
+  for (let i = erasData.length - 1; i >= 0; i--) {
+    const era = erasData[i];
+
+    if (state.energy >= era.requiredEnergy) {
+      state.era = era.id;
+      break;
+    }
+  }
 }
 
 // 🔥 Cargar upgrades desde JSON
@@ -60,7 +81,8 @@ export function initGame() {
     recalcStats();
     // 📦 Cargar upgrades
     await loadUpgrades();
-
+    await loadEras();
+    
     render();
 
     // 👆 Click manual
@@ -87,13 +109,21 @@ export function initGame() {
 function render() {
   updateEnergy(state.energy);
 
+  updateEra();
+
+  const availableUpgrades = upgradesData.filter(
+    upg => upg.era === state.era
+  );
+
   renderShop(
-    upgradesData,
+    availableUpgrades,
     state,
     buyUpgrade,
     getCost,
     getLevel
   );
+
+  updateEraUI(state.era, erasData);
 }
 
 // RecalcStats
