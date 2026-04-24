@@ -266,7 +266,7 @@ function buyPrestigeUpgrade(upg) {
   const level = getPrestigeLevel(upg.id);
   const cost = upg.cost * (level + 1);
 
-  if (state.prestigePoints < cost) return;
+  if (upg.maxLevel && level >= upg.maxLevel) return;
 
   state.prestigePoints -= cost;
   state.prestigeUpgrades[upg.id] = level + 1;

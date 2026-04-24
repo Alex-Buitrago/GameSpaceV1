@@ -1,14 +1,15 @@
 [
     {
-      "id": "root",
-      "name": "Núcleo",
-      "cost": 0,
-      "type": "multiplier",
-      "value": 0.1,
-      "x": 2,
-      "y": 0,
-      "requires": []
-    },
+        "id": "root",
+        "name": "Núcleo",
+        "cost": 0,
+        "type": "multiplier",
+        "value": 0.1,
+        "x": 2,
+        "y": 0,
+        "requires": [],
+        "maxLevel": 1
+      },
     {
       "id": "click_1",
       "name": "Fuerza I",
