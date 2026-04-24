@@ -7,13 +7,13 @@ const defaultState = {
   energy: 0,
   click: 1,
   auto: 0,
-  upgrades: []
+  upgrades: {}
 };
 
 // 💾 Guardar progreso
-export async function saveGame(uid, data) {
+export async function saveGame(uid, state) {
   try {
-    await setDoc(doc(db, "players", uid), data);
+    await setDoc(doc(db, "players", uid), state);
   } catch (err) {
     console.error("Error guardando:", err);
   }
@@ -22,23 +22,36 @@ export async function saveGame(uid, data) {
 // 📥 Cargar progreso
 export async function loadGame(uid) {
   try {
-    const docRef = doc(db, "players", uid);
-    const snap = await getDoc(docRef);
+    const ref = doc(db, "players", uid);
+    const snap = await getDoc(ref);
 
-    // 🆕 Si no existe, crear usuario nuevo
+    // 🆕 Si no existe el usuario, lo crea
     if (!snap.exists()) {
-      await setDoc(docRef, defaultState);
+      await setDoc(ref, defaultState);
       return { ...defaultState };
     }
 
     const data = snap.data();
 
-    // 🛡️ Normalizar datos (evita undefined)
+    // 🔥 MIGRACIÓN: array → objeto
+    let upgrades = data.upgrades ?? {};
+
+    if (Array.isArray(upgrades)) {
+      const converted = {};
+
+      upgrades.forEach(id => {
+        converted[id] = 1;
+      });
+
+      upgrades = converted;
+    }
+
+    // 🛡️ Normalización completa (evita undefined)
     return {
       energy: data.energy ?? 0,
       click: data.click ?? 1,
       auto: data.auto ?? 0,
-      upgrades: data.upgrades ?? {}
+      upgrades: upgrades ?? {}
     };
 
   } catch (err) {
