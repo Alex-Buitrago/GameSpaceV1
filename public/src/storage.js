@@ -54,6 +54,7 @@ export async function loadGame(uid) {
         upgrades: upgrades ?? {},
         era: data.era ?? "stone",
       
+        prestigeUpgrades: data.prestigeUpgrades ?? {},
         prestigePoints: data.prestigePoints ?? 0,
         prestigeBonus: data.prestigeBonus ?? 1
     };

@@ -5,7 +5,7 @@ import { saveGame, loadGame } from "./storage.js";
 
 import { renderShop } from "./shop.js";
 
-import { updateEnergy, updateEPS, updateEraUI, updatePrestige, updatePrestigePreview } from "./ui.js";
+import { updateEnergy, updateEPS, updateEraUI, updatePrestige, updatePrestigePreview, renderPrestigeShop } from "./ui.js";
 
 let state = {
   energy: 0,
@@ -16,12 +16,22 @@ let state = {
   multiplier: 1,
 
   prestigePoints: 0,
-  prestigeBonus: 1
+  prestigeBonus: 1,
+
+  prestigeUpgrades: {}
 };
 
 //CalcPres
 function calculatePrestigeGain() {
   return Math.floor(Math.sqrt(state.energy / 1000));
+}
+
+//Arbol
+let prestigeData = [];
+
+async function loadPrestige() {
+  const res = await fetch("/data/prestige.json");
+  prestigeData = await res.json();
 }
 
 //UpgradeData
@@ -87,6 +97,7 @@ export function initGame() {
     // 📦 Cargar datos
     await loadUpgrades();
     await loadEras();
+    await loadPrestige();
 
     const saved = await loadGame(user.uid);
     if (saved) state = saved;
@@ -110,6 +121,11 @@ export function initGame() {
         doPrestige();
       }
     };
+
+    //PrestigioLevel
+    function getPrestigeLevel(id) {
+      return state.prestigeUpgrades[id] || 0;
+    }
 
     // 👆 Click manual
     btn.onclick = () => {
@@ -147,6 +163,13 @@ function render() {
   updateEraUI(state.era, erasData);
   updatePrestige(state.prestigePoints, state.prestigeBonus);
 
+  renderPrestigeShop(
+    prestigeData,
+    state,
+    buyPrestigeUpgrade,
+    getPrestigeLevel
+  );
+
   renderShop(
     availableUpgrades,
     state,
@@ -162,19 +185,19 @@ function recalcStats() {
   state.auto = 0;
   state.multiplier = 1;
 
-  upgradesData.forEach(upg => {
-    const level = getLevel(upg.id);
-
+  prestigeData.forEach(upg => {
+    const level = getPrestigeLevel(upg.id);
+  
     if (upg.type === "click") {
-      state.click += upg.value * level;
+      state.click *= 1 + upg.value * level;
     }
-
+  
     if (upg.type === "auto") {
-      state.auto += upg.value * level;
+      state.auto *= 1 + upg.value * level;
     }
-
+  
     if (upg.type === "multiplier") {
-      state.multiplier *= Math.pow(upg.value, level);
+      state.multiplier *= 1 + upg.value * level;
     }
   });
 }
@@ -221,5 +244,18 @@ function buyUpgrade(upg) {
 
   recalcStats();
 
+  render();
+}
+
+function buyPrestigeUpgrade(upg) {
+  const level = getPrestigeLevel(upg.id);
+  const cost = upg.cost * (level + 1);
+
+  if (state.prestigePoints < cost) return;
+
+  state.prestigePoints -= cost;
+  state.prestigeUpgrades[upg.id] = level + 1;
+
+  recalcStats();
   render();
 }

@@ -1,0 +1,23 @@
+[
+    {
+      "id": "p_click",
+      "name": "Fuerza Mejorada",
+      "cost": 5,
+      "type": "click",
+      "value": 0.5
+    },
+    {
+      "id": "p_auto",
+      "name": "Automatización",
+      "cost": 10,
+      "type": "auto",
+      "value": 0.5
+    },
+    {
+      "id": "p_multi",
+      "name": "Sobrecarga",
+      "cost": 20,
+      "type": "multiplier",
+      "value": 0.2
+    }
+  ]

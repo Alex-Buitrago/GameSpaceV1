@@ -1,5 +1,37 @@
 // /src/ui.js
 
+//ARBOL
+export function renderPrestigeShop(data, state, onBuy, getLevel) {
+  const shop = document.getElementById("prestigeShop");
+  if (!shop) return;
+
+  shop.innerHTML = "";
+
+  data.forEach(upg => {
+    const level = getLevel(upg.id);
+    const cost = upg.cost * (level + 1);
+    const canBuy = state.prestigePoints >= cost;
+
+    const div = document.createElement("div");
+    div.className = "shop-item";
+
+    div.innerHTML = `
+      <strong>${upg.name}</strong><br>
+      Nivel: ${level}<br>
+      Costo: ${cost} 💎<br>
+      +${upg.value} ${upg.type}
+    `;
+
+    div.style.opacity = canBuy ? "1" : "0.5";
+
+    if (canBuy) {
+      div.onclick = () => onBuy(upg);
+    }
+
+    shop.appendChild(div);
+  });
+}
+
 //PRESTIGIO
 export function updatePrestige(points, bonus) {
   const p = document.getElementById("prestigePoints");
