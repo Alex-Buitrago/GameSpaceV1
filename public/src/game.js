@@ -15,8 +15,16 @@ let state = {
   auto: 0,
   upgrades: {},
   era: "stone",
-  multiplier: 1 
+  multiplier: 1,
+
+  prestigePoints: 0,
+  prestigeBonus: 1
 };
+
+//CalcPres
+function calculatePrestigeGain() {
+  return Math.floor(Math.sqrt(state.energy / 1000));
+}
 
 //UpgradeData
 let upgradesData = [];
@@ -51,7 +59,7 @@ function updateEra() {
 
 //EPS
 function getEPS() {
-  return state.auto * state.multiplier;
+  return state.auto * state.multiplier * state.prestigeBonus;
 }
 
 // 🔥 Cargar upgrades desde JSON
@@ -90,9 +98,24 @@ export function initGame() {
 
     render();
 
+    const prestigeBtn = document.getElementById("prestigeBtn");
+
+    prestigeBtn.onclick = () => {
+      const gain = calculatePrestigeGain();
+
+      if (gain <= 0) {
+        alert("Necesitas más energía para prestigio");
+        return;
+      }
+
+      if (confirm(`Ganarás ${gain} fragmentos. ¿Continuar?`)) {
+        doPrestige();
+      }
+    };
+
     // 👆 Click manual
     btn.onclick = () => {
-      state.energy += state.click;
+      state.energy += state.click * state.prestigeBonus;
       render();
     };
 
@@ -121,6 +144,7 @@ function render() {
   updateEnergy(state.energy);
   updateEPS(getEPS());
   updateEraUI(state.era, erasData);
+  updatePrestige(state.prestigePoints, state.prestigeBonus);
 
   renderShop(
     availableUpgrades,
@@ -152,6 +176,26 @@ function recalcStats() {
       state.multiplier *= Math.pow(upg.value, level);
     }
   });
+}
+
+// Prestigio
+function doPrestige() {
+  const gain = calculatePrestigeGain();
+
+  if (gain <= 0) return;
+
+  state.prestigePoints += gain;
+
+  // 🔥 Bonus permanente
+  state.prestigeBonus = 1 + state.prestigePoints * 0.1;
+
+  // 🔄 RESET del juego
+  state.energy = 0;
+  state.upgrades = {};
+  state.era = "stone";
+
+  recalcStats();
+  render();
 }
 
 // 🛒 Comprar upgrade
