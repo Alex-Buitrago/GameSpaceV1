@@ -126,7 +126,7 @@ export function updateEnergy(value) {
   }
 
   //LINEAS
-  export function drawLines(container, data) {
+  function drawLines(container, data) {
     data.forEach(node => {
       node.requires.forEach(reqId => {
         const from = data.find(n => n.id === reqId);
