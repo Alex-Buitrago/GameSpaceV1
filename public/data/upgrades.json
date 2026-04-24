@@ -1,39 +1,101 @@
 [
   {
     "id": "click_1",
-    "name": "Herramienta básica",
+    "name": "Herramienta Básica",
     "baseCost": 50,
     "type": "click",
     "value": 1,
     "scaling": 1.15,
-    "era": "stone"
+    "era": "stone",
+    "icon": "🔧",
+    "color": "#00c8ff"
   },
   {
     "id": "auto_1",
-    "name": "Generador primitivo",
+    "name": "Generador Primitivo",
     "baseCost": 100,
     "type": "auto",
     "value": 1,
-    "scaling": 1.2,
-    "era": "stone"
+    "scaling": 1.20,
+    "era": "stone",
+    "icon": "⚙️",
+    "color": "#00ff9f"
+  },
+  {
+    "id": "boost_1",
+    "name": "Núcleo Energético",
+    "baseCost": 300,
+    "type": "multiplier",
+    "value": 0.5,
+    "scaling": 1.25,
+    "era": "stone",
+    "icon": "💠",
+    "color": "#ff2d6b"
   },
   {
     "id": "auto_2",
-    "name": "Máquina industrial",
+    "name": "Máquina Industrial",
     "baseCost": 500,
     "type": "auto",
     "value": 5,
     "scaling": 1.25,
-    "era": "industrial"
+    "era": "industrial",
+    "icon": "🏭",
+    "color": "#ffd700"
   },
   {
-    "id": "boost_1",
-    "name": "Núcleo energético",
-    "baseCost": 300,
+    "id": "click_2",
+    "name": "Amplificador Neural",
+    "baseCost": 800,
+    "type": "click",
+    "value": 5,
+    "scaling": 1.20,
+    "era": "industrial",
+    "icon": "🧠",
+    "color": "#9d4edd"
+  },
+  {
+    "id": "boost_2",
+    "name": "Reactor de Fusión",
+    "baseCost": 2000,
     "type": "multiplier",
-    "value": 1.5,
+    "value": 1.0,
+    "scaling": 1.30,
+    "era": "industrial",
+    "icon": "☢️",
+    "color": "#ff9900"
+  },
+  {
+    "id": "auto_3",
+    "name": "Colector Orbital",
+    "baseCost": 5000,
+    "type": "auto",
+    "value": 20,
+    "scaling": 1.30,
+    "era": "space",
+    "icon": "🛸",
+    "color": "#00c8ff"
+  },
+  {
+    "id": "click_3",
+    "name": "Singularidad Táctil",
+    "baseCost": 8000,
+    "type": "click",
+    "value": 20,
     "scaling": 1.25,
-    "era": "stone"
+    "era": "space",
+    "icon": "✨",
+    "color": "#ff2d6b"
+  },
+  {
+    "id": "auto_4",
+    "name": "Megaestructura Dyson",
+    "baseCost": 50000,
+    "type": "auto",
+    "value": 100,
+    "scaling": 1.35,
+    "era": "space",
+    "icon": "🌐",
+    "color": "#9d4edd"
   }
-  
 ]

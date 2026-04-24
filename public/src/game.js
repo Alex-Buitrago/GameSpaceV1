@@ -1,106 +1,179 @@
 import { auth } from "./firebase.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
 import { saveGame, loadGame } from "./storage.js";
-
 import { renderShop } from "./shop.js";
-
-import { updateEnergy, updateEPS, updateEraUI, updatePrestige, 
+import {
+  updateEnergy, updateEPS, updateEraUI, updatePrestige,
   updatePrestigePreview, renderPrestigeShop, renderPrestigeTree,
-  spawnFloatingText, initTabs  } from "./ui.js";
+  spawnFloatingText, initTabs, updateEraBar, showToast
+} from "./ui.js";
 
 initTabs();
 
-let state = {
-  energy: 0,
-  click: 1,
-  auto: 0,
-  upgrades: {},
-  era: "stone",
-  multiplier: 1,
-
-  prestigePoints: 0,
-  prestigeBonus: 1,
-
+// ── DEFAULT STATE ──────────────────────────────────────────────
+const DEFAULT_STATE = Object.freeze({
+  energy:           0,
+  click:            1,
+  auto:             0,
+  multiplier:       1,
+  upgrades:         {},
+  era:              "stone",
+  prestigePoints:   0,
+  prestigeBonus:    1,
   prestigeUpgrades: {}
-};
+});
 
-//CalcPres
-function calculatePrestigeGain() {
+let state = { ...DEFAULT_STATE };
+
+// ── DATA ───────────────────────────────────────────────────────
+let upgradesData  = [];
+let erasData      = [];
+let prestigeData  = [];
+
+async function loadData() {
+  const [upg, eras, pres] = await Promise.all([
+    fetch("/data/upgrades.json").then(r => r.json()),
+    fetch("/data/eras.json").then(r => r.json()),
+    fetch("/data/prestige.json").then(r => r.json())
+  ]);
+  upgradesData = upg;
+  erasData     = eras;
+  prestigeData = pres;
+}
+
+// ── HELPERS ────────────────────────────────────────────────────
+const getLevel    = id  => state.upgrades[id]         || 0;
+const getPLevel   = id  => state.prestigeUpgrades[id] || 0;
+const getCost     = upg => Math.floor(upg.baseCost * Math.pow(upg.scaling, getLevel(upg.id)));
+const getEPS      = ()  => state.auto * state.multiplier * state.prestigeBonus;
+const getClickGain= ()  => state.click * state.prestigeBonus;
+
+function calcPrestigeGain() {
   return Math.floor(Math.sqrt(state.energy / 1000));
 }
 
-
-//Arbol
-let prestigeData = [];
-
-async function loadPrestige() {
-  const res = await fetch("/data/prestige.json");
-  prestigeData = await res.json();
-}
-
-//UpgradeData
-let upgradesData = [];
-
-function getLevel(upgId) {
-  return state.upgrades[upgId] || 0;
-}
-
 function isUnlocked(node) {
-  // Si no tiene requisitos → siempre desbloqueado
-  if (!node.requires || node.requires.length === 0) return true;
-
-  return node.requires.every(id => getPrestigeLevel(id) > 0);
+  if (!node.requires?.length) return true;
+  return node.requires.every(id => getPLevel(id) > 0);
 }
 
-function getPrestigeLevel(id) {
-  return state.prestigeUpgrades?.[id] || 0;
+function formatNum(n) {
+  if (n >= 1e9) return (n / 1e9).toFixed(1) + "G";
+  if (n >= 1e6) return (n / 1e6).toFixed(1) + "M";
+  if (n >= 1e3) return (n / 1e3).toFixed(1) + "K";
+  return Math.floor(n).toString();
 }
 
-function getCost(upg) {
-  const level = getLevel(upg.id);
-  return Math.floor(upg.baseCost * Math.pow(upg.scaling, level));
-}
-
-//ErasData
-let erasData = [];
-
-async function loadEras() {
-  const res = await fetch("/data/eras.json");
-  erasData = await res.json();
-}
-
+// ── ERA ────────────────────────────────────────────────────────
 function updateEra() {
+  const prev = state.era;
   for (let i = erasData.length - 1; i >= 0; i--) {
-    const era = erasData[i];
-
-    if (state.energy >= era.requiredEnergy) {
-      state.era = era.id;
+    if (state.energy >= erasData[i].requiredEnergy) {
+      state.era = erasData[i].id;
       break;
     }
   }
-}
-
-//EPS
-function getEPS() {
-  return state.auto * state.multiplier * state.prestigeBonus;
-}
-
-// 🔥 Cargar upgrades desde JSON
-async function loadUpgrades() {
-  const res = await fetch("/data/upgrades.json");
-
-  if (!res.ok) {
-    throw new Error("No se pudo cargar upgrades.json");
+  if (state.era !== prev) {
+    const era = erasData.find(e => e.id === state.era);
+    showToast?.(`🌌 Nueva era: ${era?.name ?? state.era}`);
   }
-
-  const text = await res.text();
-  console.log("Respuesta:", text);
-
-  upgradesData = JSON.parse(text);
 }
 
-// 🎮 Inicializar juego
+// ── RECALC ─────────────────────────────────────────────────────
+/**
+ * Recalculates click, auto, and multiplier from scratch
+ * based on purchased upgrades and prestige tree nodes.
+ *
+ * BUG FIX (original): prestige tree was using *= for all stat types,
+ * causing incorrect stacking — now only multiplier uses *.
+ */
+function recalcStats() {
+  state.click      = 1;
+  state.auto       = 0;
+  state.multiplier = 1;
+
+  // Base upgrades (additive per level)
+  upgradesData.forEach(upg => {
+    const lvl = getLevel(upg.id);
+    if (!lvl) return;
+    if (upg.type === "click")      state.click      += upg.value * lvl;
+    if (upg.type === "auto")       state.auto       += upg.value * lvl;
+    if (upg.type === "multiplier") state.multiplier *= (1 + upg.value * lvl);
+  });
+
+  // Prestige tree bonuses (multiplicative)
+  prestigeData.forEach(node => {
+    const lvl = getPLevel(node.id);
+    if (!lvl) return;
+    if (node.type === "click")      state.click      *= (1 + node.value * lvl);
+    if (node.type === "auto")       state.auto       *= (1 + node.value * lvl);
+    if (node.type === "multiplier") state.multiplier *= (1 + node.value * lvl);
+  });
+}
+
+// ── BUY ───────────────────────────────────────────────────────
+function buyUpgrade(upg) {
+  const cost = getCost(upg);
+  if (state.energy < cost) return;
+  state.energy -= cost;
+  state.upgrades[upg.id] = getLevel(upg.id) + 1;
+  recalcStats();
+  render();
+}
+
+function buyPrestigeUpgrade(node) {
+  if (!isUnlocked(node)) return;
+  const lvl = getPLevel(node.id);
+  if (node.maxLevel && lvl >= node.maxLevel) return;
+  const cost = node.cost * (lvl + 1);
+  if (state.prestigePoints < cost) return;
+  state.prestigePoints -= cost;
+  state.prestigeUpgrades[node.id] = lvl + 1;
+  recalcStats();
+  render();
+}
+
+// ── PRESTIGE ──────────────────────────────────────────────────
+function doPrestige() {
+  const gain = calcPrestigeGain();
+  if (gain <= 0) {
+    alert("Necesitas más energía para prestigio");
+    return;
+  }
+  if (!confirm(`Ganarás ${gain} fragmentos 💎. ¿Continuar?`)) return;
+
+  state.prestigePoints += gain;
+  state.prestigeBonus   = 1 + state.prestigePoints * 0.1;
+  state.energy          = 0;
+  state.upgrades        = {};
+  state.era             = "stone";
+
+  recalcStats();
+  render();
+}
+
+// ── RENDER ────────────────────────────────────────────────────
+function render() {
+  updateEra();
+
+  const availableUpgrades = upgradesData.filter(upg => {
+    const era = erasData.find(e => e.id === upg.era);
+    return era && (era.requiredEnergy <= state.energy || getLevel(upg.id) > 0);
+  });
+
+  updateEnergy(state.energy, formatNum);
+  updateEPS(getEPS(), formatNum);
+  updateEraUI(state.era, erasData);
+  updatePrestige(state.prestigePoints, state.prestigeBonus);
+  updatePrestigePreview(calcPrestigeGain());
+  updateEraBar?.(state.energy, erasData, state.era);
+
+  renderPrestigeShop(prestigeData, state, buyPrestigeUpgrade, getPLevel);
+  renderPrestigeTree(prestigeData, state, buyPrestigeUpgrade, getPLevel, isUnlocked);
+  renderShop(availableUpgrades, state, buyUpgrade, getCost, getLevel, formatNum);
+}
+
+// ── INIT ─────────────────────────────────────────────────────
 export function initGame() {
   const btn = document.getElementById("clickBtn");
 
@@ -110,186 +183,33 @@ export function initGame() {
       return;
     }
 
-    // 📦 Cargar datos
-    await loadUpgrades();
-    await loadEras();
-    await loadPrestige();
+    await loadData();
 
     const saved = await loadGame(user.uid);
-    if (saved) state = saved;
+    if (saved) state = { ...DEFAULT_STATE, ...saved };
 
-    // 🔥 CLAVE
     recalcStats();
-
     render();
 
-    const prestigeBtn = document.getElementById("prestigeBtn");
+    // Prestige button
+    document.getElementById("prestigeBtn").onclick = doPrestige;
 
-    prestigeBtn.onclick = () => {
-      const gain = calculatePrestigeGain();
-
-      if (gain <= 0) {
-        alert("Necesitas más energía para prestigio");
-        return;
-      }
-
-      if (confirm(`Ganarás ${gain} fragmentos. ¿Continuar?`)) {
-        doPrestige();
-      }
-    };
-
-    // 👆 Click manual
+    // Click
     btn.onclick = (e) => {
-      const gain = state.click * state.prestigeBonus;
-    
+      const gain = getClickGain();
       state.energy += gain;
-    
-      // 🔥 posición del click
-      const rect = e.target.getBoundingClientRect();
-    
-      const x = rect.left + rect.width / 2;
-      const y = rect.top;
-    
-      spawnFloatingText(gain, x, y);
-    
+      const r = e.target.getBoundingClientRect();
+      spawnFloatingText(gain, r.left + r.width / 2, r.top, formatNum);
       render();
     };
 
-    // ⚙️ Producción automática
+    // Auto-produce (1s tick)
     setInterval(() => {
-      state.energy += getEPS();
-      state.energy = Math.min(state.energy, 1e12);
+      state.energy = Math.min(state.energy + getEPS(), 1e12);
       render();
     }, 1000);
 
-    // 💾 Guardado automático
-    setInterval(() => {
-      saveGame(user.uid, state);
-    }, 5000);
+    // Auto-save (5s)
+    setInterval(() => saveGame(user.uid, state), 5000);
   });
-}
-
-// 🎨 Render general
-function render() {
-  updateEra();
-
-  const availableUpgrades = upgradesData.filter(
-    upg => erasData.find(e => e.id === upg.era)?.requiredEnergy <= state.energy
-  );
-
-  const preview = calculatePrestigeGain();
-
-  updatePrestigePreview(preview);
-  updateEnergy(state.energy);
-  updateEPS(getEPS());
-  updateEraUI(state.era, erasData);
-  updatePrestige(state.prestigePoints, state.prestigeBonus);
-
-  renderPrestigeShop(
-    prestigeData,
-    state,
-    buyPrestigeUpgrade,
-    getPrestigeLevel
-  );
-
-  renderPrestigeTree(
-    prestigeData,
-    state,
-    buyPrestigeUpgrade,
-    getPrestigeLevel,
-    isUnlocked
-  );
-
-  renderShop(
-    availableUpgrades,
-    state,
-    buyUpgrade,
-    getCost,
-    getLevel
-  );
-}
-
-// RecalcStats
-function recalcStats() {
-  state.click = 1;
-  state.auto = 0;
-  state.multiplier = 1;
-
-  prestigeData.forEach(upg => {
-    const level = getPrestigeLevel(upg.id);
-  
-    if (upg.type === "click") {
-      state.click *= 1 + upg.value * level;
-    }
-  
-    if (upg.type === "auto") {
-      state.auto *= 1 + upg.value * level;
-    }
-  
-    if (upg.type === "multiplier") {
-      state.multiplier *= 1 + upg.value * level;
-    }
-  });
-}
-
-// Prestigio
-function doPrestige() {
-  const gain = calculatePrestigeGain();
-
-  if (gain <= 0) return;
-
-  state.prestigePoints += gain;
-
-  // 🔥 Bonus permanente
-  state.prestigeBonus = 1 + state.prestigePoints * 0.1;
-
-  // 🔄 RESET del juego
-  state.energy = 0;
-  state.upgrades = {};
-  state.era = "stone";
-
-  recalcStats();
-  render();
-}
-
-// 🛒 Comprar upgrade
-function buyUpgrade(upg) {
-  const cost = getCost(upg);
-
-  if (state.energy < cost) return;
-
-  state.energy -= cost;
-
-  // subir nivel
-  state.upgrades[upg.id] = getLevel(upg.id) + 1;
-
-  // aplicar efecto
-  if (upg.type === "click") {
-    state.click += upg.value;
-  }
-
-  if (upg.type === "auto") {
-    state.auto += upg.value;
-  }
-
-  recalcStats();
-
-  render();
-}
-
-function buyPrestigeUpgrade(upg) {
-  const level = getPrestigeLevel(upg.id);
-
-  // 🔥 límite
-  if (upg.maxLevel && level >= upg.maxLevel) return;
-
-  const cost = upg.cost * (level + 1);
-
-  if (state.prestigePoints < cost) return;
-
-  state.prestigePoints -= cost;
-  state.prestigeUpgrades[upg.id] = level + 1;
-
-  recalcStats();
-  render();
 }

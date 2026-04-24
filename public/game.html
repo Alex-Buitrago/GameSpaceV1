@@ -1,82 +1,133 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="es">
 <head>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ Void Engine</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-    <div class="app">
 
-        <!-- 🔝 HUD -->
-        <header class="topbar">
-          <div>⚡ <span id="energy">0</span></div>
-          <div>⚙ <span id="eps">0</span>/s</div>
-          <div>🌌 <span id="eraText"></span></div>
-        </header>
-    
-        <!-- 🎮 BOTÓN PRINCIPAL (SIEMPRE VISIBLE) -->
-        <div class="click-container">
-          <button id="clickBtn" class="main-btn">⚡ GENERAR</button>
-        </div>
-    
-        <!-- 🔘 TABS -->
-        <div class="tabs">
-            <button class="tab-btn active" data-tab="shop">Tienda</button>
-            <button class="tab-btn" data-tab="tree">Árbol</button>
-            <button class="tab-btn" data-tab="prestige">Prestigio</button>
+<div id="starfield"></div>
+<div id="eraFlash"></div>
+
+<div class="app" id="app">
+
+  <!-- HUD -->
+  <header class="hud">
+    <div class="hud-cell">
+      <span class="hud-label">⚡ Energía</span>
+      <span class="hud-value" id="energy">0</span>
+    </div>
+    <div class="hud-cell era">
+      <span class="hud-label">🌌 Era</span>
+      <span class="hud-value" id="eraText">—</span>
+    </div>
+    <div class="hud-cell">
+      <span class="hud-label">⚙ EPS</span>
+      <span class="hud-value" id="eps">0/s</span>
+    </div>
+  </header>
+
+  <!-- CORE ORB -->
+  <div class="core-area">
+    <div class="era-bar"><div class="era-bar-fill" id="eraBarFill"></div></div>
+    <div class="core-wrapper">
+      <div class="core-ring core-ring-1"></div>
+      <div class="core-ring core-ring-2"></div>
+      <div class="core-ring core-ring-3"></div>
+      <button id="clickBtn" class="main-btn">⚡<br>GENERAR</button>
+    </div>
+    <span class="click-hint">toca para generar</span>
+  </div>
+
+  <!-- TABS -->
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="shop">Tienda</button>
+    <button class="tab-btn" data-tab="tree">Árbol</button>
+    <button class="tab-btn" data-tab="prestige">Prestigio</button>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <section id="shopPane" class="tab-pane active">
+      <div class="section-title">Mejoras disponibles</div>
+      <div class="shop-grid" id="shopGrid"></div>
+    </section>
+
+    <section id="treePane" class="tab-pane">
+      <div class="section-title">Árbol de Prestigio</div>
+      <div id="prestigeTree" class="tree-full"></div>
+    </section>
+
+    <section id="prestigePane" class="tab-pane">
+      <div class="prestige-panel">
+        <div class="prestige-header">
+          <div class="prestige-stat">
+            <span class="val" id="prestigePoints">0</span>
+            <span class="lbl">💎 Fragmentos</span>
           </div>
+          <div class="prestige-stat">
+            <span class="val" id="prestigeBonus">1.00x</span>
+            <span class="lbl">🚀 Bonus</span>
+          </div>
+          <div class="prestige-stat">
+            <span class="val" id="prestigePreview" style="color:#aaa">0</span>
+            <span class="lbl">Ganancia</span>
+          </div>
+        </div>
 
-    
-        <!-- 📦 CONTENIDO -->
-        <main class="content">
-    
-          <section id="shopTab" class="tab active">
-            <div class="card">
-              <h3>Tienda</h3>
-              <div id="shop"></div>
-            </div>
-          </section>
-    
-          <section id="treeTab" class="tab">
-            <div class="card">
-              <h3>Árbol de Prestigio</h3>
-              <div id="prestigeTree"></div>
-            </div>
-          </section>
-    
-        </main>
+        <div class="prestige-gain-preview">
+          Reiniciar otorgará <strong id="pGainText">0</strong> fragmentos 💎
+        </div>
 
-        <section id="prestigeTab" class="tab">
-            <div class="card">
-              <h3>Prestigio</h3>
-          
-              <p>💎 Fragmentos: <span id="prestigePoints">0</span></p>
-              <p>🚀 Bonus: <span id="prestigeBonus">1x</span></p>
-              <p>Ganancia potencial: <span id="prestigePreview">0</span></p>
-          
-              <button id="prestigeBtn" class="prestige-btn">
-                Reiniciar progreso
-              </button>
-            </div>
-          </section>
-          
+        <button class="prestige-btn" id="prestigeBtn">⟳ Reiniciar & Ascender</button>
+
+        <div class="p-shop-title">💎 Tienda de Fragmentos</div>
+        <div class="p-shop-grid" id="prestigeShop"></div>
       </div>
+    </section>
 
-    <script type="module">
-        import { auth } from "/src/firebase.js";
-        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { initGame } from "/src/game.js";
+  </main>
+</div>
 
-        onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                window.location.href = "/login.html";
-            } else {
-                initGame();
-            }
-        });
-    </script>
+<div id="toast">—</div>
+
+<script>
+// Starfield
+(function() {
+  const sf = document.getElementById('starfield');
+  for (let i = 0; i < 120; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    const op   = (Math.random() * 0.6 + 0.1).toFixed(2);
+    s.style.cssText = `
+      width:${size}px;height:${size}px;
+      left:${Math.random()*100}%;top:${Math.random()*100}%;
+      background:${Math.random()>0.8?'#c0e8ff':'#ffffff'};
+      --op:${op};--dur:${(Math.random()*4+2).toFixed(1)}s;
+      animation-delay:${(Math.random()*4).toFixed(1)}s;
+    `;
+    sf.appendChild(s);
+  }
+})();
+</script>
+
+<script type="module">
+  import { auth } from "/src/firebase.js";
+  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { initGame } from "/src/game.js";
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.href = "/login.html";
+    } else {
+      initGame();
+    }
+  });
+</script>
 
 </body>
-
 </html>

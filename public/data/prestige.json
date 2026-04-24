@@ -1,43 +1,74 @@
 [
-    {
-        "id": "root",
-        "name": "Núcleo",
-        "cost": 0,
-        "type": "multiplier",
-        "value": 0.1,
-        "x": 2,
-        "y": 0,
-        "requires": [],
-        "maxLevel": 1
-      },
-    {
-      "id": "click_1",
-      "name": "Fuerza I",
-      "cost": 5,
-      "type": "click",
-      "value": 0.5,
-      "x": 1,
-      "y": 1,
-      "requires": ["root"]
-    },
-    {
-      "id": "auto_1",
-      "name": "Auto I",
-      "cost": 5,
-      "type": "auto",
-      "value": 0.5,
-      "x": 3,
-      "y": 1,
-      "requires": ["root"]
-    },
-    {
-      "id": "multi_1",
-      "name": "Overclock",
-      "cost": 10,
-      "type": "multiplier",
-      "value": 0.2,
-      "x": 2,
-      "y": 2,
-      "requires": ["click_1", "auto_1"]
-    }
-  ]
+  {
+    "id": "root",
+    "name": "Núcleo",
+    "cost": 0,
+    "type": "multiplier",
+    "value": 0.1,
+    "x": 2,
+    "y": 0,
+    "requires": [],
+    "maxLevel": 1
+  },
+  {
+    "id": "click_1",
+    "name": "Fuerza I",
+    "cost": 5,
+    "type": "click",
+    "value": 0.5,
+    "x": 1,
+    "y": 1,
+    "requires": ["root"]
+  },
+  {
+    "id": "auto_1",
+    "name": "Auto I",
+    "cost": 5,
+    "type": "auto",
+    "value": 0.5,
+    "x": 3,
+    "y": 1,
+    "requires": ["root"]
+  },
+  {
+    "id": "multi_1",
+    "name": "Overclock",
+    "cost": 10,
+    "type": "multiplier",
+    "value": 0.2,
+    "x": 2,
+    "y": 2,
+    "requires": ["click_1", "auto_1"]
+  },
+  {
+    "id": "click_2",
+    "name": "Fuerza II",
+    "cost": 15,
+    "type": "click",
+    "value": 1.0,
+    "x": 1,
+    "y": 3,
+    "requires": ["multi_1"]
+  },
+  {
+    "id": "auto_2",
+    "name": "Auto II",
+    "cost": 15,
+    "type": "auto",
+    "value": 1.0,
+    "x": 3,
+    "y": 3,
+    "requires": ["multi_1"]
+  },
+  {
+    "id": "void_core",
+    "name": "Núcleo Vacío",
+    "cost": 30,
+    "type": "multiplier",
+    "value": 0.5,
+    "x": 2,
+    "y": 4,
+    "requires": ["click_2", "auto_2"],
+    "maxLevel": 3
+  }
+]
