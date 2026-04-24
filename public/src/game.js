@@ -5,7 +5,9 @@ import { saveGame, loadGame } from "./storage.js";
 
 import { renderShop } from "./shop.js";
 
-import { updateEnergy, updateEPS, updateEraUI, updatePrestige, updatePrestigePreview, renderPrestigeShop, renderPrestigeTree  } from "./ui.js";
+import { updateEnergy, updateEPS, updateEraUI, updatePrestige, 
+        updatePrestigePreview, renderPrestigeShop, renderPrestigeTree,
+        drawLines } from "./ui.js";
 
 let state = {
   energy: 0,
