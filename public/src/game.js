@@ -56,6 +56,7 @@ export function initGame() {
       };
     }
 
+    recalcStats();
     // 📦 Cargar upgrades
     await loadUpgrades();
 
@@ -94,6 +95,24 @@ function render() {
   );
 }
 
+// RecalcStats
+function recalcStats() {
+  state.click = 1; // base
+  state.auto = 0;
+
+  upgradesData.forEach(upg => {
+    const level = getLevel(upg.id);
+
+    if (upg.type === "click") {
+      state.click += upg.value * level;
+    }
+
+    if (upg.type === "auto") {
+      state.auto += upg.value * level;
+    }
+  });
+}
+
 // 🛒 Comprar upgrade
 function buyUpgrade(upg) {
   const cost = getCost(upg);
@@ -104,6 +123,8 @@ function buyUpgrade(upg) {
 
   // subir nivel
   state.upgrades[upg.id] = getLevel(upg.id) + 1;
+
+  recalcStats();
 
   // aplicar efecto
   if (upg.type === "click") {
