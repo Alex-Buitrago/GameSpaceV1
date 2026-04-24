@@ -78,11 +78,13 @@ export function initGame() {
       };
     }
 
-    recalcStats();
+   
     // 📦 Cargar upgrades
     await loadUpgrades();
     await loadEras();
-    
+
+    recalcStats();
+
     render();
 
     // 👆 Click manual
@@ -155,8 +157,6 @@ function buyUpgrade(upg) {
   // subir nivel
   state.upgrades[upg.id] = getLevel(upg.id) + 1;
 
-  recalcStats();
-
   // aplicar efecto
   if (upg.type === "click") {
     state.click += upg.value;
@@ -165,6 +165,8 @@ function buyUpgrade(upg) {
   if (upg.type === "auto") {
     state.auto += upg.value;
   }
+
+  recalcStats();
 
   render();
 }
