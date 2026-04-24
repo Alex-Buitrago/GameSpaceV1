@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-const filePath = path.resolve("./api/users.json");
+const filePath = path.resolve("/api/users.json");
 
 function getUsers() {
   return JSON.parse(fs.readFileSync(filePath, "utf-8"));
