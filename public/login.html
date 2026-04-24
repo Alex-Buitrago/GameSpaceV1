@@ -12,10 +12,12 @@
 </div>
 
 <script type="module">
-import { loginWithGoogle } from "../src/auth.js";
-
-document.getElementById("googleLogin").onclick = loginWithGoogle;
-</script>
+    import { loginWithGoogle, checkAuth } from "../src/auth.js";
+    
+    checkAuth();
+    
+    document.getElementById("googleLogin").onclick = loginWithGoogle;
+    </script>
 
 </body>
 </html>

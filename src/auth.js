@@ -1,12 +1,20 @@
 import { auth, provider } from "./firebase.js";
-import { signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { 
+  signInWithPopup,
+  onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 export async function loginWithGoogle() {
-  try {
-    const result = await signInWithPopup(auth, provider);
-    localStorage.setItem("user", JSON.stringify(result.user));
-    window.location.href = "/game.html";
-  } catch (err) {
-    alert("Error login");
-  }
+  await signInWithPopup(auth, provider);
+}
+
+export function checkAuth() {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+      window.location.href = "/game.html";
+    } else {
+      localStorage.removeItem("user");
+    }
+  });
 }
