@@ -1,9 +1,9 @@
 import { auth } from "./firebase.js";
-import { onAuthStateChanged } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 import { saveGame, loadGame } from "./storage.js";
 import { updateEnergy, clickEffect } from "./ui.js";
+import { renderShop } from "./shop.js";
 
 let state = {
   energy: 0,
@@ -12,25 +12,74 @@ let state = {
   upgrades: []
 };
 
+let upgradesData = [];
+
+// 🔥 Cargar upgrades desde JSON
+async function loadUpgrades() {
+  const res = await fetch("/data/upgrades.json");
+  upgradesData = await res.json();
+}
+
+// 🎮 Inicializar juego
 export function initGame() {
   const btn = document.getElementById("clickBtn");
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) return;
 
+    // 🔄 Cargar datos del usuario
     const saved = await loadGame(user.uid);
     if (saved) state = saved;
 
-    updateEnergy(state.energy);
+    // 📦 Cargar upgrades
+    await loadUpgrades();
 
+    render();
+
+    // 👆 Click manual
     btn.onclick = () => {
       state.energy += state.click;
-      updateEnergy(state.energy);
       clickEffect(btn);
+      render();
     };
 
+    // ⚙️ Auto generación
+    setInterval(() => {
+      state.energy += state.auto;
+      render();
+    }, 1000);
+
+    // 💾 Guardado automático
     setInterval(() => {
       saveGame(user.uid, state);
     }, 5000);
   });
+}
+
+// 🎨 Render general
+function render() {
+  updateEnergy(state.energy);
+  renderShop(upgradesData, state, buyUpgrade);
+}
+
+// 🛒 Comprar upgrade
+function buyUpgrade(upg) {
+  if (state.energy < upg.cost) return;
+
+  // Evitar comprar repetido
+  if (state.upgrades.includes(upg.id)) return;
+
+  state.energy -= upg.cost;
+  state.upgrades.push(upg.id);
+
+  // Aplicar efecto
+  if (upg.type === "click") {
+    state.click += upg.value;
+  }
+
+  if (upg.type === "auto") {
+    state.auto += upg.value;
+  }
+
+  render();
 }
