@@ -33,5 +33,9 @@ body {
     background: #222;
     padding: 10px;
     border-radius: 10px;
-    cursor: pointer;
+    transition: 0.2s;
+  }
+  
+  .shop-item:hover {
+    transform: scale(1.03);
   }

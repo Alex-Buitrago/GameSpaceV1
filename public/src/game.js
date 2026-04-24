@@ -9,10 +9,19 @@ let state = {
   energy: 0,
   click: 1,
   auto: 0,
-  upgrades: []
+  upgrades: {} // 👈 ahora es objeto, no array
 };
 
 let upgradesData = [];
+
+function getLevel(upgId) {
+  return state.upgrades[upgId] || 0;
+}
+
+function getCost(upg) {
+  const level = getLevel(upg.id);
+  return Math.floor(upg.baseCost * Math.pow(upg.scaling, level));
+}
 
 // 🔥 Cargar upgrades desde JSON
 async function loadUpgrades() {
@@ -75,20 +84,28 @@ export function initGame() {
 // 🎨 Render general
 function render() {
   updateEnergy(state.energy);
-  renderShop(upgradesData, state, buyUpgrade);
+
+  renderShop(
+    upgradesData,
+    state,
+    buyUpgrade,
+    getCost,
+    getLevel
+  );
 }
 
 // 🛒 Comprar upgrade
 function buyUpgrade(upg) {
-  if (state.energy < upg.cost) return;
+  const cost = getCost(upg);
 
-  // Evitar comprar repetido
-  if (state.upgrades.includes(upg.id)) return;
+  if (state.energy < cost) return;
 
-  state.energy -= upg.cost;
-  state.upgrades.push(upg.id);
+  state.energy -= cost;
 
-  // Aplicar efecto
+  // subir nivel
+  state.upgrades[upg.id] = getLevel(upg.id) + 1;
+
+  // aplicar efecto
   if (upg.type === "click") {
     state.click += upg.value;
   }

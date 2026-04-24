@@ -7,7 +7,7 @@ const defaultState = {
   energy: 0,
   click: 1,
   auto: 0,
-  upgrades: []
+  upgrades: data.upgrades ?? {}
 };
 
 // 💾 Guardar progreso
