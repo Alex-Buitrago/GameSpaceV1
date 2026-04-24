@@ -140,8 +140,8 @@ function drawLines(container, data, getLevel) {
 
       const x1 = from.x * 120 + 50;
       const y1 = from.y * 100 + 30;
-      div.style.left = node.x * 80 + "px";
-      div.style.top = node.y * 80 + "px";
+      const x2 = node.x * 120 + 50;
+      const y2 = node.y * 100 + 30;
 
       const length = Math.hypot(x2 - x1, y2 - y1);
       const angle = Math.atan2(y2 - y1, x2 - x1);
@@ -149,12 +149,18 @@ function drawLines(container, data, getLevel) {
       line.style.width = length + "px";
       line.style.left = x1 + "px";
       line.style.top = y1 + "px";
+      line.style.transformOrigin = "0 0";
       line.style.transform = `rotate(${angle}rad)`;
 
-      // 🔥 COLOR DINÁMICO
+      // 🔥 COLOR CORRECTO (sin usar div)
       const active = getLevel(reqId) > 0;
 
-      line.style.background = active ? "#00ff88" : "#555";
+      if (active) {
+        line.style.background = "#00ff88";
+        line.style.boxShadow = "0 0 6px #00ff88";
+      } else {
+        line.style.background = "#555";
+      }
 
       container.appendChild(line);
     });
