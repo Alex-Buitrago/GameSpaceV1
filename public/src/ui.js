@@ -39,6 +39,9 @@ export function renderPrestigeTree(data, state, onBuy, getLevel, isUnlocked) {
 
   container.innerHTML = "";
 
+  // 🔥 dibujar líneas primero
+  drawLines(container, data);
+
   data.forEach(node => {
     const level = getLevel(node.id);
     const unlocked = isUnlocked(node);
@@ -125,7 +128,7 @@ export function updateEnergy(value) {
     }, 100);
   }
 
-  //LINEAS
+//Lineas
   function drawLines(container, data) {
     data.forEach(node => {
       node.requires.forEach(reqId => {
