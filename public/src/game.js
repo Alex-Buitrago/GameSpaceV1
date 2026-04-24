@@ -41,6 +41,10 @@ function getLevel(upgId) {
   return state.upgrades[upgId] || 0;
 }
 
+function getPrestigeLevel(id) {
+  return state.prestigeUpgrades?.[id] || 0;
+}
+
 function getCost(upg) {
   const level = getLevel(upg.id);
   return Math.floor(upg.baseCost * Math.pow(upg.scaling, level));
@@ -121,11 +125,6 @@ export function initGame() {
         doPrestige();
       }
     };
-
-    //PrestigioLevel
-    function getPrestigeLevel(id) {
-      return state.prestigeUpgrades[id] || 0;
-    }
 
     // 👆 Click manual
     btn.onclick = () => {
