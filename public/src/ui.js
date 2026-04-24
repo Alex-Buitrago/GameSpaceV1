@@ -140,8 +140,8 @@ function drawLines(container, data, getLevel) {
 
       const x1 = from.x * 120 + 50;
       const y1 = from.y * 100 + 30;
-      const x2 = node.x * 120 + 50;
-      const y2 = node.y * 100 + 30;
+      div.style.left = node.x * 80 + "px";
+      div.style.top = node.y * 80 + "px";
 
       const length = Math.hypot(x2 - x1, y2 - y1);
       const angle = Math.atan2(y2 - y1, x2 - x1);

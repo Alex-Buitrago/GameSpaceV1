@@ -34,6 +34,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    min-height: 0;
   }
   
   /* TARJETAS */
@@ -42,6 +43,8 @@ body {
     border: 2px solid #5a0f7a;
     border-radius: 10px;
     padding: 10px;
+    display: flex;
+    flex-direction: column;
   }
   
   /* BOTÓN PRINCIPAL */
@@ -69,9 +72,13 @@ body {
   /* ÁRBOL */
   #prestigeTree {
     position: relative;
-    height: 400px;
+    width: 100%;
+    min-height: 400px;   /* 🔥 importante */
+    height: 100%;
     background: #0f0f18;
     border-radius: 10px;
+    overflow: hidden;
+    flex: 1;
   }
 
   .floating-text {
@@ -97,4 +104,12 @@ body {
   /* efecto botón */
   .main-btn:active {
     transform: scale(0.9);
+  }
+
+  .node {
+    z-index: 2;
+  }
+  
+  .line {
+    z-index: 1;
   }
