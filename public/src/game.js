@@ -17,7 +17,15 @@ let upgradesData = [];
 // 🔥 Cargar upgrades desde JSON
 async function loadUpgrades() {
   const res = await fetch("/data/upgrades.json");
-  upgradesData = await res.json();
+
+  if (!res.ok) {
+    throw new Error("No se pudo cargar upgrades.json");
+  }
+
+  const text = await res.text();
+  console.log("Respuesta:", text);
+
+  upgradesData = JSON.parse(text);
 }
 
 // 🎮 Inicializar juego
