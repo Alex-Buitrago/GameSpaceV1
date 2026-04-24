@@ -7,7 +7,9 @@ import { updateEnergy, clickEffect } from "./ui.js";
 
 let state = {
   energy: 0,
-  click: 1
+  click: 1,
+  auto: 0,
+  upgrades: []
 };
 
 export function initGame() {

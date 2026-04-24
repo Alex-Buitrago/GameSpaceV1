@@ -22,3 +22,16 @@ body {
     color: white;
     cursor: pointer;
   }
+
+  #shop {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .shop-item {
+    background: #222;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+  }

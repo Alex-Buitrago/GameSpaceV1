@@ -1,0 +1,16 @@
+[
+    {
+      "id": "click_1",
+      "name": "Herramienta básica",
+      "cost": 50,
+      "type": "click",
+      "value": 1
+    },
+    {
+      "id": "auto_1",
+      "name": "Generador primitivo",
+      "cost": 100,
+      "type": "auto",
+      "value": 1
+    }
+  ]
