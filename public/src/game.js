@@ -1,3 +1,8 @@
+import { auth } from "./firebase.js";
+import { onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+import { saveGame, loadGame } from "./storage.js";
 import { updateEnergy, clickEffect } from "./ui.js";
 
 let state = {
@@ -8,29 +13,22 @@ let state = {
 export function initGame() {
   const btn = document.getElementById("clickBtn");
 
-  load();
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) return;
 
-  btn.onclick = () => {
-    state.energy += state.click;
+    const saved = await loadGame(user.uid);
+    if (saved) state = saved;
+
     updateEnergy(state.energy);
-    clickEffect(btn);
-  };
 
-  setInterval(save, 5000);
+    btn.onclick = () => {
+      state.energy += state.click;
+      updateEnergy(state.energy);
+      clickEffect(btn);
+    };
 
-  function save() {
-    localStorage.setItem("game", JSON.stringify(state));
-
-    fetch("/api/save", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(state)
-    });
-  }
-
-  function load() {
-    const data = localStorage.getItem("game");
-    if (data) state = JSON.parse(data);
-    updateEnergy(state.energy);
-  }
+    setInterval(() => {
+      saveGame(user.uid, state);
+    }, 5000);
+  });
 }
