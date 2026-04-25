@@ -193,10 +193,18 @@ export async function initGame() {
   // Init tabs now that DOM is ready
   initTabs();
 
-  await loadData();
+  try {
+    await loadData();
+  } catch(e) {
+    console.error("loadData failed:", e);
+  }
 
-  const saved = await loadGame(userKey);
-  if (saved) state = { ...DEFAULT_STATE, ...saved };
+  try {
+    const saved = await loadGame(userKey);
+    if (saved) state = { ...DEFAULT_STATE, ...saved };
+  } catch(e) {
+    console.error("loadGame failed:", e);
+  }
 
   recalcStats();
   render();

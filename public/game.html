@@ -148,8 +148,17 @@
   import { checkAuth } from "/src/auth.js";
   import { initGame } from "/src/game.js";
 
-  checkAuth();
-  initGame();
+  const user = checkAuth();
+  if (user) {
+    initGame().catch(err => {
+      console.error("initGame failed:", err);
+      document.body.innerHTML = `<div style="color:#ff2d6b;font-family:monospace;padding:40px;text-align:center">
+        <h2>Error al cargar el juego</h2>
+        <p style="margin-top:12px;color:#888">${err.message}</p>
+        <button onclick="location.reload()" style="margin-top:20px;padding:10px 24px;background:#1a1a2e;border:1px solid #ff2d6b;color:#ff2d6b;cursor:pointer;border-radius:8px;font-family:monospace">Reintentar</button>
+      </div>`;
+    });
+  }
 </script>
 
 </body>
