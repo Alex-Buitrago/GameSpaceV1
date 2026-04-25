@@ -134,10 +134,8 @@ export function renderPrestigeTree(data, state, onBuy, getLevel, isUnlocked) {
 }
 
 function _setupDrag(viewport, canvas, cWidth, cHeight) {
-  // Remove old listeners by cloning
-  const vp = viewport.cloneNode(false);
-  while (canvas.firstChild) vp.appendChild ? null : null;
-  // Instead, use a flag approach
+  // Avoid attaching duplicate listeners
+  if (viewport._dragSetup) return;
   viewport._dragSetup = true;
 
   const ts = _treeState;
