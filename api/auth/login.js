@@ -1,38 +1,39 @@
-import fs from "fs";
-import path from "path";
+// Login handler — uses Firestore REST API (no firebase-admin needed)
+const PROJECT_ID = "spacegame-f4c6b";
 
-const filePath = path.resolve("./api/users.json");
-
-function getUsers() {
-  return JSON.parse(fs.readFileSync(filePath, "utf-8"));
+function emailToKey(email) {
+  return email.replace(/[.@]/g, "_").replace(/[^a-zA-Z0-9_-]/g, "");
 }
 
-export default function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Método no permitido" });
+async function getUser(email) {
+  const key = emailToKey(email);
+  const url = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/users/${key}`;
+  try {
+    const res  = await fetch(url);
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data.error || !data.fields) return null;
+    return {
+      email:    data.fields.email?.stringValue ?? null,
+      password: data.fields.password?.stringValue ?? null
+    };
+  } catch {
+    return null;
   }
+}
 
-  const { email, password } =
-    typeof req.body === "string"
-      ? JSON.parse(req.body)
-      : req.body;
+export default async function handler(req, res) {
+  if (req.method !== "POST") return res.status(405).json({ error: "Método no permitido" });
 
-  if (!email || !password) {
-    return res.status(400).json({ error: "Faltan datos" });
-  }
+  const body = typeof req.body === "string" ? JSON.parse(req.body) : (req.body ?? {});
+  const { email, password } = body;
 
-  const users = getUsers();
+  if (!email || !password) return res.status(400).json({ error: "Faltan datos" });
 
-  const user = users.find(
-    u => u.email === email && u.password === password
-  );
-
-  if (!user) {
+  const user = await getUser(email.toLowerCase().trim());
+  if (!user || user.password !== password) {
     return res.status(401).json({ error: "Credenciales inválidas" });
   }
 
-  return res.status(200).json({
-    ok: true,
-    user: { email }
-  });
+  return res.status(200).json({ ok: true, user: { email: email.toLowerCase().trim() } });
 }

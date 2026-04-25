@@ -1,44 +1,214 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <title>Login</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ Void Engine — Acceso</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #02030a;
+      --panel:   rgba(8, 10, 24, 0.92);
+      --border:  rgba(0, 200, 255, 0.22);
+      --accent:  #00c8ff;
+      --accent2: #ff2d6b;
+      --gold:    #ffd700;
+      --green:   #00ff9f;
+      --purple:  #9d4edd;
+      --text:    #c8deff;
+      --dim:     #4a6080;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Share Tech Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    #starfield { position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse at 20% 10%, rgba(157,78,221,0.18) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 80%, rgba(0,200,255,0.14) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(255,45,107,0.07) 0%, transparent 60%); }
+    .star { position: absolute; border-radius: 50%; animation: twinkle var(--dur) ease-in-out infinite; opacity: var(--op); }
+    @keyframes twinkle { 0%,100% { opacity: var(--op); transform: scale(1); } 50% { opacity: calc(var(--op)*0.15); transform: scale(0.4); } }
+    .nebula { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; animation: nebulaPulse 8s ease-in-out infinite alternate; }
+    .nebula-1 { width: 350px; height: 350px; top: -80px; left: -80px; background: rgba(157,78,221,0.12); }
+    .nebula-2 { width: 280px; height: 280px; bottom: -60px; right: -60px; background: rgba(0,200,255,0.1); animation-delay: -4s; }
+    @keyframes nebulaPulse { from { transform: scale(1); opacity: 0.7; } to { transform: scale(1.15); opacity: 1; } }
+    .card {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 400px;
+      margin: 0 16px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 32px 32px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 0 0 1px rgba(0,200,255,0.05), 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(0,200,255,0.06);
+      animation: cardIn 0.5s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    @keyframes cardIn { from { opacity: 0; transform: translateY(30px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .card::after { content: ''; position: absolute; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(0,200,255,0.2), transparent); top: 0; border-radius: 20px 20px 0 0; }
+    .logo-area { text-align: center; margin-bottom: 28px; }
+    .logo-orb {
+      width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 12px; position: relative;
+      background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.12) 0%, transparent 50%), radial-gradient(circle, #1a0535 0%, #0a0020 60%, #000 100%);
+      box-shadow: inset 0 0 20px rgba(0,200,255,0.25), 0 0 30px rgba(0,200,255,0.3), 0 0 60px rgba(157,78,221,0.2);
+    }
+    .logo-orb::before { content: '⚡'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 28px; animation: orbPulse 2s ease-in-out infinite; }
+    .logo-ring { position: absolute; inset: -8px; border-radius: 50%; border: 1.5px solid transparent; border-top-color: var(--accent); border-right-color: var(--accent); opacity: 0.5; animation: spin 3s linear infinite; }
+    .logo-ring-2 { inset: -14px; border-top-color: transparent; border-bottom-color: var(--accent2); border-left-color: var(--accent2); opacity: 0.3; animation: spin 5s linear infinite reverse; }
+    @keyframes orbPulse { 0%,100% { filter: drop-shadow(0 0 6px var(--accent)); } 50% { filter: drop-shadow(0 0 14px var(--accent)) drop-shadow(0 0 4px white); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .logo-title { font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 900; letter-spacing: 4px; background: linear-gradient(135deg, var(--accent), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .logo-sub { font-size: 10px; color: var(--dim); letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; }
+    .auth-tabs { display: flex; gap: 4px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 4px; margin-bottom: 24px; }
+    .auth-tab { flex: 1; padding: 8px; border: none; border-radius: 8px; background: transparent; color: var(--dim); font-family: 'Orbitron', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease; }
+    .auth-tab.active { background: linear-gradient(135deg, rgba(0,200,255,0.15), rgba(157,78,221,0.1)); color: var(--accent); border: 1px solid rgba(0,200,255,0.3); text-shadow: 0 0 8px var(--accent); box-shadow: 0 0 12px rgba(0,200,255,0.1); }
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 9px; color: var(--dim); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+    .form-input { width: 100%; padding: 12px 14px; background: rgba(0,200,255,0.04); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'Share Tech Mono', monospace; font-size: 13px; outline: none; transition: all 0.2s ease; }
+    .form-input::placeholder { color: var(--dim); }
+    .form-input:focus { border-color: rgba(0,200,255,0.5); background: rgba(0,200,255,0.07); box-shadow: 0 0 0 3px rgba(0,200,255,0.08), 0 0 16px rgba(0,200,255,0.1); }
+    .btn-submit { width: 100%; margin-top: 6px; padding: 14px; border: 1px solid rgba(0,200,255,0.4); border-radius: 12px; background: linear-gradient(135deg, rgba(0,200,255,0.15), rgba(157,78,221,0.1)); color: var(--accent); font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease; text-shadow: 0 0 10px var(--accent); position: relative; overflow: hidden; }
+    .btn-submit::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(0,200,255,0.12), transparent); transition: left 0.4s ease; }
+    .btn-submit:hover { background: linear-gradient(135deg, rgba(0,200,255,0.25), rgba(157,78,221,0.2)); box-shadow: 0 0 25px rgba(0,200,255,0.3), 0 0 50px rgba(157,78,221,0.15); transform: translateY(-1px); }
+    .btn-submit:hover::before { left: 100%; }
+    .btn-submit:active { transform: translateY(1px); }
+    .btn-submit.loading { opacity: 0.6; pointer-events: none; }
+    .msg { min-height: 20px; margin-top: 12px; text-align: center; font-size: 11px; letter-spacing: 0.5px; padding: 0 4px; transition: all 0.3s ease; }
+    .msg.error   { color: var(--accent2); text-shadow: 0 0 8px var(--accent2); }
+    .msg.success { color: var(--green);   text-shadow: 0 0 8px var(--green); }
+    .divider { display: flex; align-items: center; gap: 10px; margin: 18px 0; color: var(--dim); font-size: 9px; letter-spacing: 2px; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .card-footer { margin-top: 4px; text-align: center; font-size: 9px; color: var(--dim); letter-spacing: 1px; }
+  </style>
 </head>
 <body>
 
-  <h2>Login / Register</h2>
+<div id="starfield"></div>
+<div class="nebula nebula-1"></div>
+<div class="nebula nebula-2"></div>
 
-  <input id="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
+<div class="card">
+  <div class="logo-area">
+    <div class="logo-orb">
+      <div class="logo-ring"></div>
+      <div class="logo-ring logo-ring-2"></div>
+    </div>
+    <div class="logo-title">VOID ENGINE</div>
+    <div class="logo-sub">Sistema de Acceso</div>
+  </div>
 
-  <button id="loginBtn">Login</button>
-  <button id="registerBtn">Register</button>
+  <div class="auth-tabs">
+    <button class="auth-tab active" id="tabLogin">Iniciar Sesión</button>
+    <button class="auth-tab" id="tabRegister">Registrarse</button>
+  </div>
 
-  <p id="msg"></p>
+  <div class="form-group">
+    <label class="form-label" for="email">📧 Correo electrónico</label>
+    <input class="form-input" id="email" type="email" placeholder="piloto@void.space" autocomplete="email">
+  </div>
 
-  <script type="module">
-    import { login, register } from "/src/auth.js";
+  <div class="form-group">
+    <label class="form-label" for="password">🔐 Contraseña</label>
+    <input class="form-input" id="password" type="password" placeholder="••••••••" autocomplete="current-password">
+  </div>
 
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
-    const msg = document.getElementById("msg");
+  <button class="btn-submit" id="actionBtn">▶ INICIAR SESIÓN</button>
+  <p class="msg" id="msg"></p>
 
-    loginBtn.onclick = async () => {
-      try {
-        await login(email.value, password.value);
-      } catch (e) {
-        msg.innerText = e.message;
+  <div class="divider">VOID ENGINE v1.0</div>
+  <div class="card-footer">Conquista el universo. Genera energía. Trasciende.</div>
+</div>
+
+<script>
+(function() {
+  const sf = document.getElementById('starfield');
+  for (let i = 0; i < 140; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    const op   = (Math.random() * 0.6 + 0.1).toFixed(2);
+    s.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;background:${Math.random()>0.8?'#c0e8ff':'#ffffff'};--op:${op};--dur:${(Math.random()*4+2).toFixed(1)}s;animation-delay:${(Math.random()*4).toFixed(1)}s;`;
+    sf.appendChild(s);
+  }
+})();
+</script>
+
+<script type="module">
+  import { login, register } from "/src/auth.js";
+
+  const emailEl     = document.getElementById("email");
+  const passwordEl  = document.getElementById("password");
+  const actionBtn   = document.getElementById("actionBtn");
+  const msgEl       = document.getElementById("msg");
+  const tabLogin    = document.getElementById("tabLogin");
+  const tabRegister = document.getElementById("tabRegister");
+
+  let mode = "login";
+
+  function setMode(m) {
+    mode = m;
+    if (m === "login") {
+      tabLogin.classList.add("active");
+      tabRegister.classList.remove("active");
+      actionBtn.textContent = "▶ INICIAR SESIÓN";
+      passwordEl.setAttribute("autocomplete", "current-password");
+    } else {
+      tabRegister.classList.add("active");
+      tabLogin.classList.remove("active");
+      actionBtn.textContent = "✦ CREAR CUENTA";
+      passwordEl.setAttribute("autocomplete", "new-password");
+    }
+    clearMsg();
+  }
+
+  function showMsg(text, type = "error") {
+    msgEl.textContent = text;
+    msgEl.className = "msg " + type;
+  }
+  function clearMsg() { msgEl.textContent = ""; msgEl.className = "msg"; }
+
+  tabLogin.onclick    = () => setMode("login");
+  tabRegister.onclick = () => setMode("register");
+
+  [emailEl, passwordEl].forEach(el => {
+    el.addEventListener("keydown", e => { if (e.key === "Enter") actionBtn.click(); });
+  });
+
+  actionBtn.onclick = async () => {
+    const email    = emailEl.value.trim();
+    const password = passwordEl.value;
+
+    if (!email || !password) { showMsg("Por favor completa todos los campos.", "error"); return; }
+
+    actionBtn.classList.add("loading");
+    clearMsg();
+
+    try {
+      if (mode === "login") {
+        await login(email, password);
+      } else {
+        await register(email, password);
+        showMsg("✓ Cuenta creada. Ahora inicia sesión.", "success");
+        setMode("login");
+        passwordEl.value = "";
       }
-    };
-
-    registerBtn.onclick = async () => {
-      try {
-        await register(email.value, password.value);
-        msg.innerText = "Usuario creado";
-      } catch (e) {
-        msg.innerText = e.message;
-      }
-    };
-  </script>
-
+    } catch (e) {
+      showMsg("✗ " + e.message, "error");
+    } finally {
+      actionBtn.classList.remove("loading");
+    }
+  };
+</script>
 </body>
 </html>

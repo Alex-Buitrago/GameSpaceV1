@@ -1,5 +1,6 @@
-import { auth } from "./firebase.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+
+import { getCurrentUser } from "./auth.js";
 import { saveGame, loadGame } from "./storage.js";
 import { renderShop } from "./shop.js";
 import {
@@ -177,39 +178,40 @@ function render() {
 export function initGame() {
   const btn = document.getElementById("clickBtn");
 
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      window.location.href = "/login.html";
-      return;
-    }
+  const user = getCurrentUser();
+  if (!user) {
+    window.location.href = "/login.html";
+    return;
+  }
 
-    await loadData();
+  const userKey = user.email;
 
-    const saved = await loadGame(user.uid);
-    if (saved) state = { ...DEFAULT_STATE, ...saved };
+  await loadData();
 
-    recalcStats();
+  const saved = await loadGame(userKey);
+  if (saved) state = { ...DEFAULT_STATE, ...saved };
+
+  recalcStats();
+  render();
+
+  // Prestige button
+  document.getElementById("prestigeBtn").onclick = doPrestige;
+
+  // Click
+  btn.onclick = (e) => {
+    const gain = getClickGain();
+    state.energy += gain;
+    const r = e.target.getBoundingClientRect();
+    spawnFloatingText(gain, r.left + r.width / 2, r.top, formatNum);
     render();
+  };
 
-    // Prestige button
-    document.getElementById("prestigeBtn").onclick = doPrestige;
+  // Auto-produce (1s tick)
+  setInterval(() => {
+    state.energy = Math.min(state.energy + getEPS(), 1e12);
+    render();
+  }, 1000);
 
-    // Click
-    btn.onclick = (e) => {
-      const gain = getClickGain();
-      state.energy += gain;
-      const r = e.target.getBoundingClientRect();
-      spawnFloatingText(gain, r.left + r.width / 2, r.top, formatNum);
-      render();
-    };
-
-    // Auto-produce (1s tick)
-    setInterval(() => {
-      state.energy = Math.min(state.energy + getEPS(), 1e12);
-      render();
-    }, 1000);
-
-    // Auto-save (5s)
-    setInterval(() => saveGame(user.uid, state), 5000);
-  });
+  // Auto-save (5s)
+  setInterval(() => saveGame(userKey, state), 5000);
 }
