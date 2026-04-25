@@ -52,12 +52,13 @@ export function renderPrestigeTree(data, state, onBuy, getLevel, isUnlocked) {
   canvas.style.width  = cWidth  + "px";
   canvas.style.height = cHeight + "px";
 
-  // Center tree in viewport on first render
+  // Center tree in viewport on first load
   const vw = viewport.clientWidth  || 360;
   const vh = viewport.clientHeight || 400;
-  if (_treeState.tx === 0 && _treeState.ty === 0) {
-    _treeState.tx = Math.max(0, (vw - cWidth)  / 2);
-    _treeState.ty = Math.max(0, (vh - cHeight) / 2);
+  if (!_treeState.centered) {
+    _treeState.tx = Math.round((vw - cWidth)  / 2);
+    _treeState.ty = Math.round(Math.max(20, (vh - cHeight) / 2));
+    _treeState.centered = true;
   }
   canvas.style.transform = `translate(${_treeState.tx}px, ${_treeState.ty}px)`;
 
@@ -274,12 +275,15 @@ export function initTabs() {
       buttons.forEach(b => b.classList.remove("active"));
       panes.forEach(p   => p.classList.remove("active"));
       btn.classList.add("active");
-      // Try mainPane, shopPane, treePane, prestigePane
       const tabName = btn.dataset.tab;
       const target =
         document.getElementById(tabName + "Pane") ||
         document.getElementById(tabName + "Tab");
       if (target) target.classList.add("active");
+      // Re-center tree every time tree tab is opened
+      if (tabName === "tree") {
+        _treeState.centered = false;
+      }
     };
   });
 }

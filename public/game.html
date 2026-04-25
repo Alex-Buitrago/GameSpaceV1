@@ -2,161 +2,208 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>⚡ Void Engine</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 
-<div id="starfield"></div>
-<div id="eraFlash"></div>
+<canvas id="bg-canvas"></canvas>
 
-<div class="app" id="app">
+<div class="app">
 
-  <!-- HUD -->
+  <!-- ── HUD ── -->
   <header class="hud">
     <div class="hud-cell">
-      <span class="hud-label">⚡ Energía</span>
-      <span class="hud-value" id="energy">0</span>
+      <span class="hud-icon">⚡</span>
+      <span class="hud-val" id="energy">0</span>
+      <span class="hud-lbl">Energía</span>
     </div>
-    <div class="hud-cell era">
-      <span class="hud-label">🌌 Era</span>
-      <span class="hud-value" id="eraText">—</span>
+    <div class="hud-cell hud-era">
+      <span class="hud-icon">🌌</span>
+      <span class="hud-val" id="eraText">—</span>
+      <span class="hud-lbl">Era</span>
     </div>
     <div class="hud-cell">
-      <span class="hud-label">⚙ EPS</span>
-      <span class="hud-value" id="eps">0/s</span>
+      <span class="hud-icon">⚙</span>
+      <span class="hud-val" id="eps">0/s</span>
+      <span class="hud-lbl">Por segundo</span>
     </div>
   </header>
 
-  <!-- TABS -->
+  <!-- ── TABS ── -->
   <nav class="tabs">
-    <button class="tab-btn active" data-tab="main">⚡ Generar</button>
-    <button class="tab-btn" data-tab="shop">Tienda</button>
-    <button class="tab-btn" data-tab="tree">Árbol</button>
-    <button class="tab-btn" data-tab="prestige">Prestigio</button>
+    <button class="tab-btn active" data-tab="main">⚡<span>Generar</span></button>
+    <button class="tab-btn"        data-tab="shop">🛒<span>Tienda</span></button>
+    <button class="tab-btn"        data-tab="tree">🌳<span>Árbol</span></button>
+    <button class="tab-btn"        data-tab="prestige">💎<span>Prestigio</span></button>
   </nav>
 
-  <!-- CONTENT -->
-  <main class="content">
+  <!-- ── PANELS ── -->
+  <main class="panels">
 
-    <!-- MAIN TAB: orbe + era bar -->
-    <section id="mainPane" class="tab-pane active">
-      <div class="main-tab-layout">
+    <!-- GENERAR -->
+    <section id="mainPane" class="panel active">
+      <div class="main-layout">
 
-        <div class="era-bar-wrap">
-          <div class="era-bar-label" id="eraBarLabel">Progreso de Era</div>
-          <div class="era-bar"><div class="era-bar-fill" id="eraBarFill"></div></div>
+        <div class="era-progress">
+          <div class="era-progress-label" id="eraBarLabel">Progreso de Era</div>
+          <div class="era-progress-track">
+            <div class="era-progress-fill" id="eraBarFill" style="width:0%"></div>
+          </div>
         </div>
 
-        <div class="orb-section">
-          <div class="core-wrapper">
-            <div class="core-ring core-ring-1"></div>
-            <div class="core-ring core-ring-2"></div>
-            <div class="core-ring core-ring-3"></div>
-            <button id="clickBtn" class="main-btn" aria-label="Generar energía"></button>
+        <div class="orb-wrap">
+          <div class="orb-rings">
+            <div class="ring r1"></div>
+            <div class="ring r2"></div>
+            <div class="ring r3"></div>
           </div>
-          <span class="click-hint">toca para generar energía</span>
+          <button id="clickBtn" class="orb" aria-label="Generar energía">
+            <span class="orb-glyph">⚡</span>
+            <span class="orb-label">GENERAR</span>
+          </button>
         </div>
 
-        <div class="quick-stats">
-          <div class="qs-item">
-            <span class="qs-label">Por click</span>
-            <span class="qs-val" id="clickPower">1</span>
+        <p class="orb-hint">toca para generar energía</p>
+
+        <div class="stats-row">
+          <div class="stat-box">
+            <span class="stat-val" id="clickPower">1</span>
+            <span class="stat-lbl">Por click</span>
           </div>
-          <div class="qs-sep">·</div>
-          <div class="qs-item">
-            <span class="qs-label">Por segundo</span>
-            <span class="qs-val" id="epsStat">0</span>
+          <div class="stat-divider"></div>
+          <div class="stat-box">
+            <span class="stat-val" id="epsStat">0</span>
+            <span class="stat-lbl">Por segundo</span>
           </div>
-          <div class="qs-sep">·</div>
-          <div class="qs-item">
-            <span class="qs-label">Multiplicador</span>
-            <span class="qs-val" id="multStat">1.00x</span>
+          <div class="stat-divider"></div>
+          <div class="stat-box">
+            <span class="stat-val" id="multStat">1.00x</span>
+            <span class="stat-lbl">Multiplicador</span>
           </div>
         </div>
 
       </div>
     </section>
 
-    <!-- SHOP TAB -->
-    <section id="shopPane" class="tab-pane">
-      <div class="section-title">Mejoras disponibles</div>
-      <div class="shop-grid" id="shopGrid"></div>
-    </section>
-
-    <!-- TREE TAB — full pane, draggable -->
-    <section id="treePane" class="tab-pane tree-tab-pane">
-      <div class="tree-header">
-        <span class="tree-header-title">✦ Árbol de Prestigio</span>
-        <span class="tree-header-hint">arrastra para explorar</span>
-      </div>
-      <div id="treeViewport" class="tree-viewport">
-        <div id="treeCanvas" class="tree-canvas"></div>
+    <!-- TIENDA -->
+    <section id="shopPane" class="panel">
+      <div class="panel-inner">
+        <h2 class="panel-title">Mejoras disponibles</h2>
+        <div class="shop-list" id="shopGrid"></div>
       </div>
     </section>
 
-    <!-- PRESTIGE TAB -->
-    <section id="prestigePane" class="tab-pane">
-      <div class="prestige-panel">
-        <div class="prestige-header">
-          <div class="prestige-stat">
-            <span class="val" id="prestigePoints">0</span>
-            <span class="lbl">💎 Fragmentos</span>
+    <!-- ÁRBOL -->
+    <section id="treePane" class="panel tree-panel">
+      <div class="tree-topbar">
+        <span class="tree-topbar-title">✦ Árbol de Prestigio</span>
+        <span class="tree-topbar-hint">arrastra · explora</span>
+      </div>
+      <div id="treeViewport" class="tree-vp">
+        <div id="treeCanvas" class="tree-cv"></div>
+      </div>
+    </section>
+
+    <!-- PRESTIGIO -->
+    <section id="prestigePane" class="panel">
+      <div class="panel-inner">
+
+        <div class="prestige-stats">
+          <div class="pstat">
+            <span class="pstat-val" id="prestigePoints">0</span>
+            <span class="pstat-lbl">💎 Fragmentos</span>
           </div>
-          <div class="prestige-stat">
-            <span class="val" id="prestigeBonus">1.00x</span>
-            <span class="lbl">🚀 Bonus</span>
+          <div class="pstat-sep"></div>
+          <div class="pstat">
+            <span class="pstat-val accent-purple" id="prestigeBonus">1.00x</span>
+            <span class="pstat-lbl">🚀 Bonus</span>
           </div>
-          <div class="prestige-stat">
-            <span class="val" id="prestigePreview" style="color:#aaa">0</span>
-            <span class="lbl">Ganancia</span>
+          <div class="pstat-sep"></div>
+          <div class="pstat">
+            <span class="pstat-val accent-dim" id="prestigePreview">0</span>
+            <span class="pstat-lbl">Ganancia</span>
           </div>
         </div>
 
-        <div class="prestige-gain-preview">
+        <p class="prestige-preview-text">
           Reiniciar otorgará <strong id="pGainText">0</strong> fragmentos 💎
-        </div>
+        </p>
 
-        <button class="prestige-btn" id="prestigeBtn">⟳ Reiniciar & Ascender</button>
+        <button class="prestige-btn" id="prestigeBtn">⟳ Reiniciar &amp; Ascender</button>
 
-        <div class="p-shop-title">💎 Tienda de Fragmentos</div>
+        <h3 class="p-shop-title">💎 Tienda de Fragmentos</h3>
         <div class="p-shop-grid" id="prestigeShop"></div>
+
       </div>
     </section>
 
   </main>
 </div>
 
-<div id="toast">—</div>
+<div id="toast"></div>
 
 <script>
+// Animated star background
 (function() {
-  const sf = document.getElementById('starfield');
-  for (let i = 0; i < 120; i++) {
-    const s = document.createElement('div');
-    s.className = 'star';
-    const size = Math.random() * 2.5 + 0.5;
-    const op   = (Math.random() * 0.6 + 0.1).toFixed(2);
-    s.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;background:${Math.random()>0.8?'#c0e8ff':'#ffffff'};--op:${op};--dur:${(Math.random()*4+2).toFixed(1)}s;animation-delay:${(Math.random()*4).toFixed(1)}s;`;
-    sf.appendChild(s);
+  const c = document.getElementById('bg-canvas');
+  const ctx = c.getContext('2d');
+  let W, H, stars = [];
+
+  function resize() {
+    W = c.width  = window.innerWidth;
+    H = c.height = window.innerHeight;
+    stars = Array.from({length: 130}, () => ({
+      x: Math.random() * W, y: Math.random() * H,
+      r: Math.random() * 1.4 + 0.3,
+      a: Math.random(), da: (Math.random() * 0.003 + 0.001) * (Math.random() > 0.5 ? 1 : -1)
+    }));
   }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    // Nebula glow
+    const g1 = ctx.createRadialGradient(W*0.2, H*0.1, 0, W*0.2, H*0.1, W*0.4);
+    g1.addColorStop(0, 'rgba(150,80,255,0.1)'); g1.addColorStop(1, 'transparent');
+    ctx.fillStyle = g1; ctx.fillRect(0,0,W,H);
+    const g2 = ctx.createRadialGradient(W*0.8, H*0.85, 0, W*0.8, H*0.85, W*0.35);
+    g2.addColorStop(0, 'rgba(0,180,255,0.08)'); g2.addColorStop(1, 'transparent');
+    ctx.fillStyle = g2; ctx.fillRect(0,0,W,H);
+
+    stars.forEach(s => {
+      s.a += s.da;
+      if (s.a > 1 || s.a < 0.05) s.da *= -1;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(200,220,255,${s.a.toFixed(2)})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  draw();
 })();
 </script>
 
 <script type="module">
   import { checkAuth } from "/src/auth.js";
-  import { initGame } from "/src/game.js";
+  import { initGame }  from "/src/game.js";
 
   const user = checkAuth();
   if (user) {
     initGame().catch(err => {
       console.error("initGame failed:", err);
-      document.body.innerHTML = `<div style="color:#ff2d6b;font-family:monospace;padding:40px;text-align:center">
-        <h2>Error al cargar el juego</h2>
-        <p style="margin-top:12px;color:#888">${err.message}</p>
-        <button onclick="location.reload()" style="margin-top:20px;padding:10px 24px;background:#1a1a2e;border:1px solid #ff2d6b;color:#ff2d6b;cursor:pointer;border-radius:8px;font-family:monospace">Reintentar</button>
-      </div>`;
+      document.body.innerHTML = `
+        <div style="color:#ff6b9d;font-family:monospace;padding:60px 20px;text-align:center;background:#05070f;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
+          <div style="font-size:32px">⚠</div>
+          <div style="font-size:18px;font-weight:bold">Error al cargar</div>
+          <div style="font-size:12px;color:#666;max-width:300px">${err.message}</div>
+          <button onclick="location.reload()" style="margin-top:8px;padding:12px 28px;background:transparent;border:1px solid #ff6b9d;color:#ff6b9d;cursor:pointer;border-radius:8px;font-family:monospace;font-size:13px">↺ Reintentar</button>
+        </div>`;
     });
   }
 </script>
