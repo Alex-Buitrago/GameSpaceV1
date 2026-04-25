@@ -266,7 +266,7 @@ export function showToast(msg) {
 // ── TABS ──────────────────────────────────────────────────────
 export function initTabs() {
   const buttons = document.querySelectorAll(".tab-btn");
-  const panes   = document.querySelectorAll(".tab-pane");
+  const panes   = document.querySelectorAll(".panel");
 
   if (!buttons.length) return;
 
