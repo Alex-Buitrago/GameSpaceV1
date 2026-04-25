@@ -1,11 +1,3 @@
 {
-  "version": 2,
-  "rewrites": [
-    { "source": "/src/:path*",  "destination": "/public/src/:path*" },
-    { "source": "/data/:path*", "destination": "/public/data/:path*" },
-    { "source": "/styles.css",  "destination": "/public/styles.css" },
-    { "source": "/game.html",   "destination": "/public/game.html" },
-    { "source": "/login.html",  "destination": "/public/login.html" },
-    { "source": "/",            "destination": "/public/index.html" }
-  ]
+  "outputDirectory": "public"
 }
