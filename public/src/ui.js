@@ -269,14 +269,18 @@ export function initTabs() {
   const buttons = document.querySelectorAll(".tab-btn");
   const panes   = document.querySelectorAll(".tab-pane");
 
+  if (!buttons.length) return;
+
   buttons.forEach(btn => {
     btn.onclick = () => {
       buttons.forEach(b => b.classList.remove("active"));
       panes.forEach(p   => p.classList.remove("active"));
       btn.classList.add("active");
+      // Try mainPane, shopPane, treePane, prestigePane
+      const tabName = btn.dataset.tab;
       const target =
-        document.getElementById(btn.dataset.tab + "Pane") ||
-        document.getElementById(btn.dataset.tab + "Tab");
+        document.getElementById(tabName + "Pane") ||
+        document.getElementById(tabName + "Tab");
       if (target) target.classList.add("active");
     };
   });

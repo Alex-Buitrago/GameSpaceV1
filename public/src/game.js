@@ -7,8 +7,6 @@ import {
   spawnFloatingText, initTabs, updateEraBar, showToast
 } from "./ui.js";
 
-initTabs();
-
 // ── DEFAULT STATE ──────────────────────────────────────────────
 const DEFAULT_STATE = Object.freeze({
   energy:           0,
@@ -191,6 +189,9 @@ export async function initGame() {
   }
 
   const userKey = user.email;
+
+  // Init tabs now that DOM is ready
+  initTabs();
 
   await loadData();
 
