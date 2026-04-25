@@ -1,5 +1,3 @@
-
-
 import { getCurrentUser } from "./auth.js";
 import { saveGame, loadGame } from "./storage.js";
 import { renderShop } from "./shop.js";
@@ -175,7 +173,7 @@ function render() {
 }
 
 // ── INIT ─────────────────────────────────────────────────────
-export function initGame() {
+export async function initGame() {
   const btn = document.getElementById("clickBtn");
 
   const user = getCurrentUser();
