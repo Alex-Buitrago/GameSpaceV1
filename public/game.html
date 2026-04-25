@@ -29,21 +29,10 @@
     </div>
   </header>
 
-  <!-- CORE ORB -->
-  <div class="core-area">
-    <div class="era-bar"><div class="era-bar-fill" id="eraBarFill"></div></div>
-    <div class="core-wrapper">
-      <div class="core-ring core-ring-1"></div>
-      <div class="core-ring core-ring-2"></div>
-      <div class="core-ring core-ring-3"></div>
-      <button id="clickBtn" class="main-btn">⚡<br>GENERAR</button>
-    </div>
-    <span class="click-hint">toca para generar</span>
-  </div>
-
   <!-- TABS -->
   <nav class="tabs">
-    <button class="tab-btn active" data-tab="shop">Tienda</button>
+    <button class="tab-btn active" data-tab="main">⚡ Generar</button>
+    <button class="tab-btn" data-tab="shop">Tienda</button>
     <button class="tab-btn" data-tab="tree">Árbol</button>
     <button class="tab-btn" data-tab="prestige">Prestigio</button>
   </nav>
@@ -51,16 +40,63 @@
   <!-- CONTENT -->
   <main class="content">
 
-    <section id="shopPane" class="tab-pane active">
+    <!-- MAIN TAB: orbe + era bar -->
+    <section id="mainPane" class="tab-pane active">
+      <div class="main-tab-layout">
+
+        <div class="era-bar-wrap">
+          <div class="era-bar-label" id="eraBarLabel">Progreso de Era</div>
+          <div class="era-bar"><div class="era-bar-fill" id="eraBarFill"></div></div>
+        </div>
+
+        <div class="orb-section">
+          <div class="core-wrapper">
+            <div class="core-ring core-ring-1"></div>
+            <div class="core-ring core-ring-2"></div>
+            <div class="core-ring core-ring-3"></div>
+            <button id="clickBtn" class="main-btn">⚡<br>GENERAR</button>
+          </div>
+          <span class="click-hint">toca para generar energía</span>
+        </div>
+
+        <div class="quick-stats">
+          <div class="qs-item">
+            <span class="qs-label">Por click</span>
+            <span class="qs-val" id="clickPower">1</span>
+          </div>
+          <div class="qs-sep">·</div>
+          <div class="qs-item">
+            <span class="qs-label">Por segundo</span>
+            <span class="qs-val" id="epsStat">0</span>
+          </div>
+          <div class="qs-sep">·</div>
+          <div class="qs-item">
+            <span class="qs-label">Multiplicador</span>
+            <span class="qs-val" id="multStat">1.00x</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SHOP TAB -->
+    <section id="shopPane" class="tab-pane">
       <div class="section-title">Mejoras disponibles</div>
       <div class="shop-grid" id="shopGrid"></div>
     </section>
 
-    <section id="treePane" class="tab-pane">
-      <div class="section-title">Árbol de Prestigio</div>
-      <div id="prestigeTree" class="tree-full"></div>
+    <!-- TREE TAB — full pane, draggable -->
+    <section id="treePane" class="tab-pane tree-tab-pane">
+      <div class="tree-header">
+        <span class="tree-header-title">✦ Árbol de Prestigio</span>
+        <span class="tree-header-hint">arrastra para explorar</span>
+      </div>
+      <div id="treeViewport" class="tree-viewport">
+        <div id="treeCanvas" class="tree-canvas"></div>
+      </div>
     </section>
 
+    <!-- PRESTIGE TAB -->
     <section id="prestigePane" class="tab-pane">
       <div class="prestige-panel">
         <div class="prestige-header">
@@ -95,7 +131,6 @@
 <div id="toast">—</div>
 
 <script>
-// Starfield
 (function() {
   const sf = document.getElementById('starfield');
   for (let i = 0; i < 120; i++) {
@@ -103,13 +138,7 @@
     s.className = 'star';
     const size = Math.random() * 2.5 + 0.5;
     const op   = (Math.random() * 0.6 + 0.1).toFixed(2);
-    s.style.cssText = `
-      width:${size}px;height:${size}px;
-      left:${Math.random()*100}%;top:${Math.random()*100}%;
-      background:${Math.random()>0.8?'#c0e8ff':'#ffffff'};
-      --op:${op};--dur:${(Math.random()*4+2).toFixed(1)}s;
-      animation-delay:${(Math.random()*4).toFixed(1)}s;
-    `;
+    s.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;background:${Math.random()>0.8?'#c0e8ff':'#ffffff'};--op:${op};--dur:${(Math.random()*4+2).toFixed(1)}s;animation-delay:${(Math.random()*4).toFixed(1)}s;`;
     sf.appendChild(s);
   }
 })();

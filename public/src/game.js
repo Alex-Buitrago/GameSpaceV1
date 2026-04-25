@@ -167,6 +167,14 @@ function render() {
   updatePrestigePreview(calcPrestigeGain());
   updateEraBar?.(state.energy, erasData, state.era);
 
+  // Quick stats on main tab
+  const cpEl = document.getElementById("clickPower");
+  const epsEl = document.getElementById("epsStat");
+  const multEl = document.getElementById("multStat");
+  if (cpEl)   cpEl.textContent   = formatNum(getClickGain());
+  if (epsEl)  epsEl.textContent  = formatNum(getEPS());
+  if (multEl) multEl.textContent = state.prestigeBonus.toFixed(2) + "x";
+
   renderPrestigeShop(prestigeData, state, buyPrestigeUpgrade, getPLevel);
   renderPrestigeTree(prestigeData, state, buyPrestigeUpgrade, getPLevel, isUnlocked);
   renderShop(availableUpgrades, state, buyUpgrade, getCost, getLevel, formatNum);
